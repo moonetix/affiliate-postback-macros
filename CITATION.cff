@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it as below."
+type: dataset
+title: "Affiliate postback macros"
+abstract: "S2S postback macros, parameters, signature schemes and reversal rules for affiliate tracking platforms and offerwall networks, each value linked to the vendor's public documentation."
+authors:
+  - name: "Moonetix"
+    website: "https://moonetix.com"
+version: 1.0.0
+date-released: 2026-11-11
+license: MIT
+repository-code: "https://github.com/moonetix/affiliate-postback-macros"
+url: "https://docs.moonetix.com/postbacks"
+keywords:
+  - postback
+  - s2s tracking
+  - affiliate marketing
+  - offerwall
+  - hmac

@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/moonetix/affiliate-postback-macros/blob/main/data/macros.schema.json",
+  "title": "Affiliate postback macros",
+  "type": "object",
+  "required": ["edition", "concepts", "mapping", "tracking_platforms", "offerwall_networks"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "edition": { "type": "string", "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])$" },
+    "concepts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "label": { "$ref": "#/$defs/text" },
+          "description": { "$ref": "#/$defs/text" }
+        }
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "required": ["tracking", "offerwall"],
+      "additionalProperties": false,
+      "properties": {
+        "tracking": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["label", "concept", "directions"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "$ref": "#/$defs/text" },
+              "concept": { "$ref": "#/$defs/id" },
+              "directions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/direction" } }
+            }
+          }
+        },
+        "offerwall": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["label", "concept"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "$ref": "#/$defs/text" },
+              "concept": { "$ref": "#/$defs/id" }
+            }
+          }
+        }
+      }
+    },
+    "tracking_platforms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "website", "kind", "checked", "inbound", "macros", "security", "duplicates", "not_documented"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "name": { "$ref": "#/$defs/text" },
+          "website": { "$ref": "#/$defs/url" },
+          "kind": { "enum": ["network platform", "tracker"] },
+          "checked": { "$ref": "#/$defs/checked" },
+          "inbound": {
+            "type": "object",
+            "required": ["method", "example", "note", "source"],
+            "additionalProperties": false,
+            "properties": {
+              "method": { "$ref": "#/$defs/text" },
+              "example": { "$ref": "#/$defs/text" },
+              "note": { "$ref": "#/$defs/text" },
+              "source": { "$ref": "#/$defs/url" }
+            }
+          },
+          "macros": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["direction", "concept", "macro", "source"],
+              "additionalProperties": false,
+              "properties": {
+                "direction": { "$ref": "#/$defs/direction" },
+                "concept": { "$ref": "#/$defs/id" },
+                "macro": { "$ref": "#/$defs/text" },
+                "note": { "$ref": "#/$defs/text" },
+                "source": { "$ref": "#/$defs/url" }
+              }
+            }
+          },
+          "security": { "type": "array", "items": { "$ref": "#/$defs/mechanism" } },
+          "duplicates": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/fact" }] },
+          "delivery": { "$ref": "#/$defs/fact" },
+          "not_documented": { "type": "array", "items": { "$ref": "#/$defs/text" } }
+        }
+      }
+    },
+    "offerwall_networks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "website", "checked", "method", "example", "source", "macros", "signature", "reversal", "response", "ip_allowlist", "notes"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "name": { "$ref": "#/$defs/text" },
+          "website": { "$ref": "#/$defs/url" },
+          "checked": { "$ref": "#/$defs/checked" },
+          "method": { "$ref": "#/$defs/text" },
+          "example": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/text" }] },
+          "source": { "$ref": "#/$defs/url" },
+          "macros": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["concept", "macro", "source"],
+              "additionalProperties": false,
+              "properties": {
+                "concept": { "$ref": "#/$defs/id" },
+                "macro": { "$ref": "#/$defs/text" },
+                "note": { "$ref": "#/$defs/text" },
+                "source": { "$ref": "#/$defs/url" }
+              }
+            }
+          },
+          "signature": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "type": "object",
+                "required": ["scheme", "location", "input", "key", "detail", "source"],
+                "additionalProperties": false,
+                "properties": {
+                  "scheme": { "$ref": "#/$defs/text" },
+                  "location": { "$ref": "#/$defs/text" },
+                  "input": { "$ref": "#/$defs/text" },
+                  "key": { "$ref": "#/$defs/text" },
+                  "detail": { "$ref": "#/$defs/text" },
+                  "source": { "$ref": "#/$defs/url" }
+                }
+              }
+            ]
+          },
+          "reversal": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/fact" }] },
+          "response": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/fact" }] },
+          "ip_allowlist": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/fact" }] },
+          "notes": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/text" }] }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+([_-][a-z0-9]+)*$" },
+    "text": { "type": "string", "minLength": 1 },
+    "url": { "type": "string", "pattern": "^https://[^\\s]+$" },
+    "checked": { "type": "string", "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])$" },
+    "direction": { "enum": ["inbound", "click_url", "outbound", "general"] },
+    "fact": {
+      "type": "object",
+      "required": ["detail", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "detail": { "$ref": "#/$defs/text" },
+        "source": { "$ref": "#/$defs/url" }
+      }
+    },
+    "mechanism": {
+      "type": "object",
+      "required": ["mechanism", "detail", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "mechanism": { "$ref": "#/$defs/text" },
+        "detail": { "$ref": "#/$defs/text" },
+        "source": { "$ref": "#/$defs/url" }
+      }
+    }
+  }
+}

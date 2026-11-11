@@ -1,0 +1,55 @@
+name: Add a platform
+description: Propose a tracking platform or offerwall network for the sheet.
+title: "Add platform: "
+labels: ["new platform"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We list a platform only when its own public documentation states each value. Third-party blogs, screenshots and memory are not sources.
+  - type: input
+    id: name
+    attributes:
+      label: Platform name
+      placeholder: Example Tracker
+    validations:
+      required: true
+  - type: dropdown
+    id: section
+    attributes:
+      label: Section
+      options:
+        - Part A, tracking platform (network platform or tracker)
+        - Part B, offerwall network (publisher postback)
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Documentation pages
+      description: One public URL per line, on the vendor's own domain. Each must load without a login.
+    validations:
+      required: true
+  - type: textarea
+    id: macros
+    attributes:
+      label: Macros and parameters
+      description: Concept, exact macro, and the URL that states it. Mark anything the docs do not state as not documented.
+      placeholder: |
+        click ID (inbound): cid - https://...
+        payout (outbound): {payout} - https://...
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Signature, token or allowlist
+      description: How the platform proves a postback is genuine, with the formula exactly as documented.
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Checks
+      options:
+        - label: Every value above comes from the vendor's own public docs, read this month.
+          required: true
+        - label: I work for this vendor (leave unchecked if not).

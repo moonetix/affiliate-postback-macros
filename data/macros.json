@@ -1,0 +1,657 @@
+{
+  "$schema": "./macros.schema.json",
+  "edition": "2026-11",
+  "concepts": [
+    { "id": "click_id", "label": "Click ID", "description": "The ID the tracking platform gives a click. It travels to the advertiser in the offer URL and comes back on the conversion postback." },
+    { "id": "partner_click_id", "label": "Partner click ID", "description": "The click ID of the affiliate or traffic source, echoed back to them in the outgoing postback." },
+    { "id": "sub_id", "label": "Sub ID", "description": "Free-form values the sender attaches to a click and gets back on the conversion." },
+    { "id": "amount", "label": "Payout or revenue", "description": "Money for the conversion: what the receiver earns or what the sender reports." },
+    { "id": "sale_amount", "label": "Sale amount", "description": "The order value of the sale behind the conversion." },
+    { "id": "currency", "label": "Currency", "description": "Currency code of the amount." },
+    { "id": "status", "label": "Status", "description": "Conversion state, such as approved, pending, declined or reversed." },
+    { "id": "transaction_id", "label": "Transaction ID", "description": "A unique ID for the conversion or reward, used to process it once." },
+    { "id": "event", "label": "Event or goal", "description": "Which step of a multi-event offer the conversion belongs to." },
+    { "id": "offer_id", "label": "Offer ID", "description": "ID of the offer or campaign that converted." },
+    { "id": "campaign_id", "label": "Campaign ID", "description": "ID of the tracker campaign." },
+    { "id": "affiliate_id", "label": "Affiliate ID", "description": "ID of the affiliate or partner." },
+    { "id": "ip", "label": "IP address", "description": "The user's IP address." },
+    { "id": "country", "label": "Country", "description": "The user's country." },
+    { "id": "timestamp", "label": "Time", "description": "Time of the click or conversion." },
+    { "id": "security", "label": "Security", "description": "A token, secret or signature that proves the request is genuine." },
+    { "id": "user_id", "label": "User ID", "description": "The publisher's own user ID, passed into the offerwall and returned on the postback." },
+    { "id": "reward", "label": "Reward", "description": "The reward in the publisher's virtual currency." },
+    { "id": "currency_name", "label": "Currency name", "description": "Name of the publisher's virtual currency." },
+    { "id": "offer_name", "label": "Offer name", "description": "Name of the offer." },
+    { "id": "other", "label": "Other", "description": "A documented parameter that does not fit the concepts above." }
+  ],
+  "mapping": {
+    "tracking": [
+      { "label": "Click ID in the offer URL", "concept": "click_id", "directions": ["click_url"] },
+      { "label": "Click ID parameter (inbound)", "concept": "click_id", "directions": ["inbound"] },
+      { "label": "Amount parameter (inbound)", "concept": "amount", "directions": ["inbound"] },
+      { "label": "Status parameter (inbound)", "concept": "status", "directions": ["inbound"] },
+      { "label": "Transaction ID parameter (inbound)", "concept": "transaction_id", "directions": ["inbound"] },
+      { "label": "Currency parameter (inbound)", "concept": "currency", "directions": ["inbound"] },
+      { "label": "Partner click ID (outbound)", "concept": "partner_click_id", "directions": ["outbound"] },
+      { "label": "Payout (outbound)", "concept": "amount", "directions": ["outbound", "general"] },
+      { "label": "Status (outbound)", "concept": "status", "directions": ["outbound", "general"] },
+      { "label": "Conversion ID (outbound)", "concept": "transaction_id", "directions": ["outbound", "general"] },
+      { "label": "Sub IDs (outbound)", "concept": "sub_id", "directions": ["outbound", "general"] },
+      { "label": "Offer ID (outbound)", "concept": "offer_id", "directions": ["outbound", "general"] },
+      { "label": "IP (outbound)", "concept": "ip", "directions": ["outbound", "general"] },
+      { "label": "Country (outbound)", "concept": "country", "directions": ["outbound", "general"] }
+    ],
+    "offerwall": [
+      { "label": "User ID", "concept": "user_id" },
+      { "label": "Transaction ID", "concept": "transaction_id" },
+      { "label": "Reward (your currency)", "concept": "reward" },
+      { "label": "Payout to you", "concept": "amount" },
+      { "label": "Status", "concept": "status" },
+      { "label": "Offer ID", "concept": "offer_id" },
+      { "label": "IP address", "concept": "ip" },
+      { "label": "Country", "concept": "country" },
+      { "label": "Sub IDs", "concept": "sub_id" },
+      { "label": "Signature", "concept": "security" }
+    ]
+  },
+  "tracking_platforms": [
+    {
+      "id": "affise",
+      "name": "Affise",
+      "website": "https://affise.com",
+      "kind": "network platform",
+      "checked": "2026-11",
+      "inbound": {
+        "method": "GET or POST",
+        "example": "https://abbbc.affise.com/postback?clickid={clickid}&pid={pub_id}",
+        "note": "The advertiser receives the click ID in the tracking link, for example aff_sub={clickid}, and returns it as clickid.",
+        "source": "https://help-center.affise.com/en/articles/6474604-set-up-s2s-integration-with-advertisers"
+      },
+      "macros": [
+        { "direction": "inbound", "concept": "click_id", "macro": "clickid", "note": "Also click_id. Mandatory.", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "inbound", "concept": "transaction_id", "macro": "action_id", "note": "Conversion ID in the advertiser's system.", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "inbound", "concept": "amount", "macro": "sum", "note": "Revenue.", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "inbound", "concept": "status", "macro": "status", "note": "1 approved, 2 pending, 3 declined, 5 hold.", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "inbound", "concept": "event", "macro": "goal", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "inbound", "concept": "ip", "macro": "ip", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "inbound", "concept": "timestamp", "macro": "action_timestamp", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "inbound", "concept": "security", "macro": "secure", "note": "Secure code set at offer, advertiser or platform level.", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "inbound", "concept": "other", "macro": "custom_field1 ... custom_field15", "source": "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters" },
+        { "direction": "click_url", "concept": "click_id", "macro": "{clickid}", "note": "Also {click_id}. Required in the advertiser tracking URL.", "source": "https://help-center.affise.com/en/articles/6474898-advertiser-tracking-url-macros" },
+        { "direction": "click_url", "concept": "affiliate_id", "macro": "{pid}", "source": "https://help-center.affise.com/en/articles/6474898-advertiser-tracking-url-macros" },
+        { "direction": "click_url", "concept": "offer_id", "macro": "{offer_id}", "source": "https://help-center.affise.com/en/articles/6474898-advertiser-tracking-url-macros" },
+        { "direction": "click_url", "concept": "sub_id", "macro": "{sub1} ... {sub8}", "source": "https://help-center.affise.com/en/articles/6474898-advertiser-tracking-url-macros" },
+        { "direction": "click_url", "concept": "country", "macro": "{geo}", "note": "ISO alpha-2.", "source": "https://help-center.affise.com/en/articles/6474898-advertiser-tracking-url-macros" },
+        { "direction": "outbound", "concept": "partner_click_id", "macro": "{sub1} ... {sub8}", "note": "Affise has no clickid macro for affiliate postbacks. Pass your click ID in a sub and read it back.", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "sub_id", "macro": "{sub1} ... {sub8}", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "amount", "macro": "{sum}", "note": "Conversion payout.", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "sale_amount", "macro": "{order_sum}", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "status", "macro": "{status}", "note": "1 approved, 2 pending, 3 declined, 5 hold.", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "transaction_id", "macro": "{transactionid}", "note": "The advertiser's conversion identifier.", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "offer_id", "macro": "{offerid}", "note": "No underscore here, unlike {offer_id} in tracking URLs.", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "currency", "macro": "{currency}", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "ip", "macro": "{ip}", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "country", "macro": "{geo}", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "timestamp", "macro": "{timestamp}", "note": "Unix time of conversion creation.", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" },
+        { "direction": "outbound", "concept": "event", "macro": "{goal}", "source": "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros" }
+      ],
+      "security": [
+        { "mechanism": "Secure code", "detail": "Sent in the secure parameter. A wrong or missing code is answered with Access denied.", "source": "https://help-center.affise.com/en/articles/6476587-server-postback-errors" },
+        { "mechanism": "IP allowlist", "detail": "Set at offer or advertiser level. Other addresses get Bad IP.", "source": "https://help-center.affise.com/en/articles/6476587-server-postback-errors" }
+      ],
+      "duplicates": { "detail": "A postback for a conversion that already exists is answered with Conversion exists. The page does not say which field is the key.", "source": "https://help-center.affise.com/en/articles/6476587-server-postback-errors" },
+      "not_documented": ["HMAC signing", "Currency parameter on inbound postbacks"]
+    },
+    {
+      "id": "bemob",
+      "name": "BeMob",
+      "website": "https://bemob.com",
+      "kind": "tracker",
+      "checked": "2026-11",
+      "inbound": {
+        "method": "GET",
+        "example": "https://xxxxx.bemobtrk.com/postback?cid=REPLACE&payout=OPTIONAL&txid=REPLACE&status=REPLACE",
+        "note": "cid is the only required parameter. BeMob click IDs are 22 alphanumeric characters.",
+        "source": "https://docs.bemob.com/en/postback-settings-of-affiliate-network"
+      },
+      "macros": [
+        { "direction": "inbound", "concept": "click_id", "macro": "cid", "note": "Required.", "source": "https://docs.bemob.com/en/postback-settings-of-affiliate-network" },
+        { "direction": "inbound", "concept": "amount", "macro": "payout", "source": "https://docs.bemob.com/en/postback-settings-of-affiliate-network" },
+        { "direction": "inbound", "concept": "transaction_id", "macro": "txid", "note": "Unique per conversion, for example an order number.", "source": "https://docs.bemob.com/en/postback-settings-of-affiliate-network" },
+        { "direction": "inbound", "concept": "status", "macro": "status", "note": "You map the network's values to New, Approved, Declined or Chargeback.", "source": "https://docs.bemob.com/en/postback-statuses" },
+        { "direction": "inbound", "concept": "event", "macro": "cet", "note": "Custom conversion type.", "source": "https://docs.bemob.com/en/postback-statuses" },
+        { "direction": "click_url", "concept": "click_id", "macro": "{clickId}", "note": "Example: subid={clickId}.", "source": "https://docs.bemob.com/en/offer-settings" },
+        { "direction": "outbound", "concept": "partner_click_id", "macro": "{externalId}", "source": "https://help.bemob.com/docs/postback-settings-of-a-traffic-source" },
+        { "direction": "outbound", "concept": "amount", "macro": "{payout}", "note": "Account currency. {payout.USD} converts.", "source": "https://help.bemob.com/docs/postback-settings-of-a-traffic-source" },
+        { "direction": "outbound", "concept": "transaction_id", "macro": "{transactionId}", "source": "https://help.bemob.com/docs/postback-settings-of-a-traffic-source" },
+        { "direction": "outbound", "concept": "status", "macro": "{status}", "source": "https://help.bemob.com/docs/send-postbacks-for-selected-statuses" },
+        { "direction": "outbound", "concept": "sub_id", "macro": "{custom1} ... {customN}", "source": "https://help.bemob.com/docs/postback-settings-of-a-traffic-source" },
+        { "direction": "outbound", "concept": "offer_id", "macro": "{offerId}", "source": "https://help.bemob.com/docs/postback-settings-of-a-traffic-source" },
+        { "direction": "outbound", "concept": "campaign_id", "macro": "{campaignId}", "source": "https://help.bemob.com/docs/postback-settings-of-a-traffic-source" },
+        { "direction": "outbound", "concept": "ip", "macro": "{ip}", "source": "https://help.bemob.com/docs/postback-settings-of-a-traffic-source" },
+        { "direction": "outbound", "concept": "country", "macro": "{country}", "note": "Also {countryCode}.", "source": "https://help.bemob.com/docs/postback-settings-of-a-traffic-source" }
+      ],
+      "security": [
+        { "mechanism": "IP allowlist", "detail": "Accept postbacks only from listed addresses, one per line.", "source": "https://help.bemob.com/docs/double-postbacks-and-postbacks-from-white-ips" }
+      ],
+      "duplicates": { "detail": "Repeat postbacks for the same click ID are not accepted by default unless a payout, unique transaction ID or status value sets them apart. Accept Double Postbacks turns this off.", "source": "https://help.bemob.com/docs/double-postbacks-and-postbacks-from-white-ips" },
+      "not_documented": ["HMAC signing or a secret token", "Currency parameter on inbound postbacks"]
+    },
+    {
+      "id": "binom",
+      "name": "Binom",
+      "website": "https://binom.org",
+      "kind": "tracker",
+      "checked": "2026-11",
+      "inbound": {
+        "method": "GET",
+        "example": "https://binom.org/click?cnv_id={sub1}&payout={sum}&cnv_status={status}",
+        "note": "The values in braces are the network's own macros. click is the tracker file that handles clicks and conversions.",
+        "source": "https://docs.binom.org/postback-v2.php"
+      },
+      "macros": [
+        { "direction": "inbound", "concept": "click_id", "macro": "cnv_id", "source": "https://docs.binom.org/postback-v2.php" },
+        { "direction": "inbound", "concept": "amount", "macro": "payout", "source": "https://docs.binom.org/postback-v2.php" },
+        { "direction": "inbound", "concept": "status", "macro": "cnv_status", "note": "Free text. A second field, cnv_status2, also exists.", "source": "https://docs.binom.org/postback-v2.php" },
+        { "direction": "inbound", "concept": "currency", "macro": "cnv_currency", "source": "https://docs.binom.org/postback-v2.php" },
+        { "direction": "inbound", "concept": "other", "macro": "disable_postback=1", "note": "Do not fire the postback to the traffic source for this conversion.", "source": "https://docs.binom.org/postback-v2.php" },
+        { "direction": "click_url", "concept": "click_id", "macro": "{clickid}", "note": "Example: {offer_url}?sub1={clickid}.", "source": "https://docs.binom.org/affiliate-networks.php" },
+        { "direction": "outbound", "concept": "partner_click_id", "macro": "{externalid}", "source": "https://docs.binom.org/conv-to-source.php" },
+        { "direction": "outbound", "concept": "amount", "macro": "{payout}", "note": "Payout in USD.", "source": "https://docs.binom.org/conv-to-source.php" },
+        { "direction": "outbound", "concept": "status", "macro": "{cnv_status}", "note": "Also {status}.", "source": "https://docs.binom.org/tokens-v2.php" },
+        { "direction": "outbound", "concept": "currency", "macro": "{cnv_currency}", "source": "https://docs.binom.org/conv-to-source.php" },
+        { "direction": "outbound", "concept": "sub_id", "macro": "{t1} ... {t10}", "note": "Traffic source tokens.", "source": "https://docs.binom.org/conv-to-source.php" },
+        { "direction": "outbound", "concept": "offer_id", "macro": "{offer}", "note": "The tokens page lists {offer_id}.", "source": "https://docs.binom.org/conv-to-source.php" },
+        { "direction": "outbound", "concept": "campaign_id", "macro": "{campaign}", "source": "https://docs.binom.org/conv-to-source.php" },
+        { "direction": "outbound", "concept": "ip", "macro": "{ip}", "source": "https://docs.binom.org/tokens-v2.php" },
+        { "direction": "outbound", "concept": "country", "macro": "{country}", "note": "Also {country_code}.", "source": "https://docs.binom.org/tokens-v2.php" }
+      ],
+      "security": [
+        { "mechanism": "IP allowlist", "detail": "Postback IP whitelist field on the affiliate network.", "source": "https://docs.binom.org/affiliate-networks.php" }
+      ],
+      "duplicates": { "detail": "With Upsell checked on an offer, payouts of several postbacks for the same click ID are summed instead of replaced.", "source": "https://docs.binom.org/postback-v2.php" },
+      "not_documented": ["HMAC signing or a secret token", "Transaction ID parameter on inbound postbacks", "Conversion ID macro on outbound postbacks"]
+    },
+    {
+      "id": "cake",
+      "name": "CAKE",
+      "website": "https://getcake.com",
+      "kind": "network platform",
+      "checked": "2026-11",
+      "inbound": {
+        "method": "GET",
+        "example": "https://demo-new.cakemarketing.com/p.ashx?o=976&e=ld&f=pb&r=REQUEST_SESSION_ID&t=TRANSACTION_ID",
+        "note": "Replace REQUEST_SESSION_ID with the advertiser's token for the parameter that received #reqid#, for example #s2#. The page does not define o, e and f.",
+        "source": "https://support.getcake.com/support/solutions/articles/5000546408-how-to-implement-server-to-server-tracking-using-a-postback-url"
+      },
+      "macros": [
+        { "direction": "inbound", "concept": "click_id", "macro": "r", "note": "Request Session ID.", "source": "https://support.getcake.com/support/solutions/articles/5000546408-how-to-implement-server-to-server-tracking-using-a-postback-url" },
+        { "direction": "inbound", "concept": "transaction_id", "macro": "t", "note": "Shown as t=TRANSACTION_ID in the example.", "source": "https://support.getcake.com/support/solutions/articles/5000546408-how-to-implement-server-to-server-tracking-using-a-postback-url" },
+        { "direction": "inbound", "concept": "amount", "macro": "p", "note": "Price. Overrides the offer's received amount.", "source": "https://support.getcake.com/support/solutions/articles/5000545957-how-to-set-up-a-revshare" },
+        { "direction": "click_url", "concept": "click_id", "macro": "#reqid#", "note": "Example: ?s2=#reqid#.", "source": "https://support.getcake.com/support/solutions/articles/5000546408-how-to-implement-server-to-server-tracking-using-a-postback-url" },
+        { "direction": "outbound", "concept": "partner_click_id", "macro": "#s2#", "note": "Example from CAKE: click_id=#s2#. s1 is reserved for the affiliate's sub-affiliate ID.", "source": "https://support.getcake.com/support/solutions/articles/5000546096-how-affiliates-can-use-tokens-to-send-dynamic-values-in-pixels" },
+        { "direction": "outbound", "concept": "sub_id", "macro": "#s1# ... #s5#", "source": "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic" },
+        { "direction": "outbound", "concept": "amount", "macro": "#price#", "source": "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic" },
+        { "direction": "outbound", "concept": "transaction_id", "macro": "#leadid#", "source": "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic" },
+        { "direction": "outbound", "concept": "offer_id", "macro": "#oid#", "source": "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic" },
+        { "direction": "outbound", "concept": "campaign_id", "macro": "#campid#", "source": "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic" },
+        { "direction": "outbound", "concept": "affiliate_id", "macro": "#affid#", "source": "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic" },
+        { "direction": "outbound", "concept": "ip", "macro": "#ip#", "note": "Conversion IP. #source_ip# is the click IP.", "source": "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic" },
+        { "direction": "outbound", "concept": "timestamp", "macro": "#utcunixtime#", "source": "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic" }
+      ],
+      "security": [
+        { "mechanism": "IP allowlist", "detail": "Advertiser pixel whitelist with an IP start and end. Conversions From Whitelist Only on the offer stores conversions from those servers only.", "source": "https://support.getcake.com/support/solutions/articles/5000545795-how-to-whitelist-conversion-pixel-ip-addresses" }
+      ],
+      "duplicates": null,
+      "not_documented": ["HMAC signing or a secret token", "Status parameter", "Duplicate handling on the pages we could read"]
+    },
+    {
+      "id": "everflow",
+      "name": "Everflow",
+      "website": "https://www.everflow.io",
+      "kind": "network platform",
+      "checked": "2026-11",
+      "inbound": {
+        "method": "GET",
+        "example": "https://trk.example.com/?nid=123&transaction_id={transaction_id}&amount=99.99&currency=USD",
+        "note": "nid (your network ID) and transaction_id are required. Everflow accepts GET requests only.",
+        "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls"
+      },
+      "macros": [
+        { "direction": "inbound", "concept": "click_id", "macro": "transaction_id", "note": "Required.", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "direction": "inbound", "concept": "amount", "macro": "amount", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "direction": "inbound", "concept": "currency", "macro": "currency", "note": "Three-letter ISO code.", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "direction": "inbound", "concept": "transaction_id", "macro": "order_id", "note": "Used for deduplication.", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "direction": "inbound", "concept": "event", "macro": "event_id", "note": "Also adv_event_id.", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "direction": "inbound", "concept": "timestamp", "macro": "timestamp", "note": "Unix, UTC.", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "direction": "inbound", "concept": "security", "macro": "verification_token", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "direction": "inbound", "concept": "other", "macro": "adv1 ... adv10", "note": "Custom names are ignored.", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "direction": "click_url", "concept": "click_id", "macro": "{transaction_id}", "note": "Example: click_id={transaction_id} in the Default Landing Page.", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "click_url", "concept": "offer_id", "macro": "{offer_id}", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "click_url", "concept": "affiliate_id", "macro": "{affiliate_id}", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "partner_click_id", "macro": "{sub1}", "note": "Commonly used for the partner's click ID.", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "sub_id", "macro": "{sub1} ... {sub10}", "note": "Slots 6 to 10 were added in May 2026.", "source": "https://helpdesk.everflow.io/collaborator/managing-postbacks-as-a-partner" },
+        { "direction": "outbound", "concept": "amount", "macro": "{payout_amount}", "note": "In the offer currency. The partner help article names this macro {payout}.", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "sale_amount", "macro": "{sale_amount}", "note": "Visible to partners only if the network enables it.", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "transaction_id", "macro": "{conversion_id}", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "offer_id", "macro": "{offer_id}", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "affiliate_id", "macro": "{affiliate_id}", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "currency", "macro": "{offer_currency}", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "ip", "macro": "{session_ip}", "note": "{conversion_ip} is the IP at conversion.", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "country", "macro": "{geo_country_code}", "note": "ISO 3166-1 alpha-2.", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "timestamp", "macro": "{timestamp}", "note": "Unix, UTC.", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" },
+        { "direction": "outbound", "concept": "event", "macro": "{event_id}", "source": "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros" }
+      ],
+      "security": [
+        { "mechanism": "Verification token", "detail": "verification_token, up to 50 characters, case-sensitive, set per advertiser. Once enabled it is required on every postback for that advertiser's offers.", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+        { "mechanism": "IP or domain allowlist", "detail": "Set per advertiser, enforced per offer with Enforce Advertiser Whitelist. Ranges and wildcards are not allowed.", "source": "https://helpdesk.everflow.io/customer/ip-domain-whitelisting-for-advertisers" }
+      ],
+      "duplicates": { "detail": "Turn off Allow Duplicate Conversions on the offer and send a unique order_id.", "source": "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls" },
+      "delivery": { "detail": "Partner postbacks: up to 5 attempts, any 2xx counts as success. A postback is deactivated after at least 10 consecutive failures spanning more than 72 hours.", "source": "https://helpdesk.everflow.io/collaborator/managing-postbacks-as-a-partner" },
+      "not_documented": ["HMAC signing", "Status macro"]
+    },
+    {
+      "id": "keitaro",
+      "name": "Keitaro",
+      "website": "https://keitaro.io",
+      "kind": "tracker",
+      "checked": "2026-11",
+      "inbound": {
+        "method": "GET",
+        "example": "http://IP/postback-key/postback?subid=REPLACE&status=REPLACE&payout=REPLACE",
+        "note": "The postback key in the path authenticates the request. subid and status are mandatory.",
+        "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html"
+      },
+      "macros": [
+        { "direction": "inbound", "concept": "click_id", "macro": "subid", "note": "Mandatory.", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" },
+        { "direction": "inbound", "concept": "status", "macro": "status", "note": "Mandatory. lead, sale, rejected, registration, deposit, trash, or custom. Unknown values are ignored and logged.", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" },
+        { "direction": "inbound", "concept": "amount", "macro": "payout", "note": "Positive and negative values are supported.", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" },
+        { "direction": "inbound", "concept": "transaction_id", "macro": "tid", "note": "Records repeat conversions without overwriting the previous one.", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" },
+        { "direction": "inbound", "concept": "currency", "macro": "currency", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" },
+        { "direction": "inbound", "concept": "sub_id", "macro": "sub_id_1 ... sub_id_30", "note": "Updates click data.", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" },
+        { "direction": "inbound", "concept": "other", "macro": "return", "note": "Response text returned to the sender.", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" },
+        { "direction": "click_url", "concept": "click_id", "macro": "{subid}", "note": "The only required offer parameter. Example: &sub1={subid}.", "source": "https://docs.keitaro.io/en/conversions-and-postback/adding-affiliate-networks.html" },
+        { "direction": "outbound", "concept": "partner_click_id", "macro": "{external_id}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "click_id", "macro": "{subid}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "status", "macro": "{status}", "note": "Can be remapped, for example {status:lead=0 sale=1 rejected=2}.", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "amount", "macro": "{revenue}", "note": "Also {conversion_revenue}.", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "transaction_id", "macro": "{tid}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "sub_id", "macro": "{sub_id_1} ... {sub_id_30}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "offer_id", "macro": "{offer_id}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "campaign_id", "macro": "{campaign_id}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "ip", "macro": "{ip}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "country", "macro": "{country}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" },
+        { "direction": "outbound", "concept": "timestamp", "macro": "{conversion_time:format,timezone}", "source": "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html" }
+      ],
+      "security": [
+        { "mechanism": "Postback key", "detail": "A unique key in the postback path protects the tracker from fake postback requests. Self-hosted installs change it with TRACKER_POSTBACK_KEY.", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" }
+      ],
+      "duplicates": { "detail": "A second postback with the same status overwrites the earlier conversion. Send a unique tid to keep them separate.", "source": "https://docs.keitaro.io/en/conversions-and-postback/postback.html" },
+      "not_documented": ["HMAC signing", "IP allowlist"]
+    },
+    {
+      "id": "redtrack",
+      "name": "RedTrack",
+      "website": "https://www.redtrack.io",
+      "kind": "tracker",
+      "checked": "2026-11",
+      "inbound": {
+        "method": "GET",
+        "example": "https://your.dedicated.tracking.domain.com/postback?clickid={affiliate_network_parameter}",
+        "note": "Add sum for the payout and type for the conversion type.",
+        "source": "https://help.redtrack.io/?p=423"
+      },
+      "macros": [
+        { "direction": "inbound", "concept": "click_id", "macro": "clickid", "source": "https://help.redtrack.io/?p=423" },
+        { "direction": "inbound", "concept": "amount", "macro": "sum", "source": "https://help.redtrack.io/?p=9054" },
+        { "direction": "inbound", "concept": "event", "macro": "type", "note": "Conversion type, for example type=InitiateCheckout.", "source": "https://help.redtrack.io/?p=21537" },
+        { "direction": "inbound", "concept": "transaction_id", "macro": "rdtk_event_id", "note": "Used by the duplicate mode that ignores repeats by event ID. Integration guides use eventid.", "source": "https://help.redtrack.io/knowledgebase/tracking-event-types/" },
+        { "direction": "inbound", "concept": "timestamp", "macro": "timestamp", "note": "Unix time. The conversion is recorded at this time.", "source": "https://help.redtrack.io/?p=423" },
+        { "direction": "click_url", "concept": "click_id", "macro": "{clickid}", "note": "Example: offer_url?affiliate_network_parameter={clickid}.", "source": "https://help.redtrack.io/?p=423" },
+        { "direction": "outbound", "concept": "partner_click_id", "macro": "{ref_id}", "source": "https://help.redtrack.io/knowledgebase/adding-traffic-channel/" },
+        { "direction": "outbound", "concept": "amount", "macro": "{offer_payout}", "note": "There is no {payout} macro.", "source": "https://help.redtrack.io/knowledgebase/adding-traffic-channel/" },
+        { "direction": "general", "concept": "transaction_id", "macro": "{postbackid}", "note": "Conversion ID.", "source": "https://help.redtrack.io/?p=423" },
+        { "direction": "general", "concept": "sub_id", "macro": "{sub1} ... {sub20}", "source": "https://help.redtrack.io/?p=423" },
+        { "direction": "general", "concept": "offer_id", "macro": "{offerid}", "source": "https://help.redtrack.io/?p=423" },
+        { "direction": "general", "concept": "campaign_id", "macro": "{campaignid}", "source": "https://help.redtrack.io/?p=423" },
+        { "direction": "general", "concept": "ip", "macro": "{ip}", "source": "https://help.redtrack.io/?p=423" },
+        { "direction": "general", "concept": "country", "macro": "{country}", "source": "https://help.redtrack.io/?p=423" }
+      ],
+      "security": [
+        { "mechanism": "Postback protection", "detail": "A toggle on the offer source adds a unique ptoken to the postback template. Conversions with a non-matching ptoken are ignored.", "source": "https://help.redtrack.io/knowledgebase/kb/basic-setup-9785/offer-sources-brand-related-settings-9830/postback-protection/" },
+        { "mechanism": "IP allowlist", "detail": "Whitelist IP records conversions only from a given IP or range.", "source": "https://help.redtrack.io/knowledgebase/kb/basic-setup-9785/offer-sources-brand-related-settings-9830/postback-protection/" }
+      ],
+      "duplicates": { "detail": "Duplicate postback mode per offer source, including Ignore duplicate postbacks and Ignore duplicate postbacks by event id (rdtk_event_id).", "source": "https://help.redtrack.io/knowledgebase/tracking-event-types/" },
+      "not_documented": ["HMAC signing", "Name of the inbound status parameter (statuses are other, approved, pending, declined)", "Currency parameter"]
+    },
+    {
+      "id": "voluum",
+      "name": "Voluum",
+      "website": "https://voluum.com",
+      "kind": "tracker",
+      "checked": "2026-11",
+      "inbound": {
+        "method": "GET",
+        "example": "https://voluum_dedicated_domain.com/postback?cid=REPLACE&payout=OPTIONAL&txid=OPTIONAL",
+        "note": "HTTPS needs SSL enabled on your dedicated domain.",
+        "source": "https://doc.voluum.com/en/submitting_postback_url.html"
+      },
+      "macros": [
+        { "direction": "inbound", "concept": "click_id", "macro": "cid", "note": "Required. c is also accepted; cid wins.", "source": "https://doc.voluum.com/article/parameters-in-postback-urls" },
+        { "direction": "inbound", "concept": "amount", "macro": "payout", "note": "p is also accepted; payout wins.", "source": "https://doc.voluum.com/article/parameters-in-postback-urls" },
+        { "direction": "inbound", "concept": "transaction_id", "macro": "txid", "note": "Unique within the scope of one click ID.", "source": "https://doc.voluum.com/article/parameters-in-postback-urls" },
+        { "direction": "inbound", "concept": "event", "macro": "et", "note": "Conversion type. Needs custom conversions set up.", "source": "https://doc.voluum.com/article/parameters-in-postback-urls" },
+        { "direction": "inbound", "concept": "currency", "macro": "currency", "note": "Overrides the offer currency.", "source": "https://doc.voluum.com/article/parameters-in-postback-urls" },
+        { "direction": "inbound", "concept": "other", "macro": "param1 ... param5", "source": "https://doc.voluum.com/article/parameters-in-postback-urls" },
+        { "direction": "click_url", "concept": "click_id", "macro": "{clickid}", "note": "Example: https://offer_url.com?s2={clickid}.", "source": "https://doc.voluum.com/article/pass-information-to-an-affiliate-network" },
+        { "direction": "outbound", "concept": "partner_click_id", "macro": "{externalid}", "source": "https://doc.voluum.com/article/traffic-source-postback-url" },
+        { "direction": "outbound", "concept": "click_id", "macro": "{click.id}", "source": "https://doc.voluum.com/article/traffic-source-postback-url" },
+        { "direction": "outbound", "concept": "amount", "macro": "{payout}", "source": "https://doc.voluum.com/article/traffic-source-postback-url" },
+        { "direction": "outbound", "concept": "transaction_id", "macro": "{transaction.id}", "source": "https://doc.voluum.com/article/traffic-source-postback-url" },
+        { "direction": "outbound", "concept": "sub_id", "macro": "{var1}, {var:name}", "note": "Custom variables.", "source": "https://doc.voluum.com/article/traffic-source-postback-url" },
+        { "direction": "outbound", "concept": "offer_id", "macro": "{offer.id}", "source": "https://doc.voluum.com/article/traffic-source-postback-url" },
+        { "direction": "outbound", "concept": "campaign_id", "macro": "{campaign.id}", "source": "https://doc.voluum.com/article/traffic-source-postback-url" },
+        { "direction": "outbound", "concept": "ip", "macro": "{ip}", "source": "https://doc.voluum.com/article/traffic-source-postback-url" },
+        { "direction": "outbound", "concept": "country", "macro": "{country}", "note": "Also {countryname}.", "source": "https://doc.voluum.com/article/traffic-source-postback-url" }
+      ],
+      "security": [
+        { "mechanism": "IP allowlist", "detail": "Inbound postbacks from IPs that are not allowlisted are discarded. Does not work while IP anonymization is on.", "source": "https://doc.voluum.com/article/add-an-affiliate-network-to-voluum" }
+      ],
+      "duplicates": { "detail": "Duplicate click IDs are discarded. The same cid and txid pair counts once. Accept duplicate postbacks keeps repeats with an empty txid.", "source": "https://doc.voluum.com/article/upselling-tracking-subsequent-conversions" },
+      "not_documented": ["HMAC signing or a secret token", "Status parameter"]
+    }
+  ],
+  "offerwall_networks": [
+    {
+      "id": "moonetix",
+      "name": "Moonetix",
+      "website": "https://moonetix.com",
+      "checked": "2026-11",
+      "method": "GET",
+      "example": "https://yoursite.com/postback?user={user_id}&tx={transaction_id}&event={event_id}&status={status}&reward={reward}&payout={payout}&hash={hash}",
+      "source": "https://docs.moonetix.com/postbacks",
+      "macros": [
+        { "concept": "user_id", "macro": "{user_id}", "note": "The user ID from your offerwall link.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "transaction_id", "macro": "{transaction_id}", "note": "Same value on the credit and a later reversal.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "event", "macro": "{event_id}", "note": "Unique per event.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "status", "macro": "{status}", "note": "1 credited, 2 reversed. {state} gives the same in words.", "source": "https://docs.moonetix.com/postbacks#statuses" },
+        { "concept": "reward", "macro": "{reward}", "note": "In your currency. Never negative.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "currency_name", "macro": "{currency}", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "amount", "macro": "{payout}", "note": "What you earn, in USD. Never negative.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "offer_id", "macro": "{offer_id}", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "offer_name", "macro": "{offer_name}", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "country", "macro": "{country}", "note": "Two-letter code.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "other", "macro": "{device}", "note": "desktop, android or ios.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "ip", "macro": "{ip}", "note": "IP the user started the offer from.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "sub_id", "macro": "{sub1} ... {sub5}", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "other", "macro": "{integration}", "note": "offerwall, api or sdk.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "other", "macro": "{app_id}", "note": "Useful when one URL serves several offerwalls.", "source": "https://docs.moonetix.com/postbacks#macros" },
+        { "concept": "security", "macro": "{hash}", "source": "https://docs.moonetix.com/postbacks#verify" }
+      ],
+      "signature": {
+        "scheme": "HMAC-SHA256",
+        "location": "{hash} macro, lowercase hex",
+        "input": "transaction_id:user_id:reward:status",
+        "key": "Postback secret key",
+        "detail": "Hash the values exactly as they arrive. The postback secret key is not the link hash salt.",
+        "source": "https://docs.moonetix.com/postbacks#verify"
+      },
+      "reversal": { "detail": "status=2 (state reversed) with the same transaction_id and the same positive reward and payout as the credit.", "source": "https://docs.moonetix.com/credits-and-reversals#how-we-signal" },
+      "response": { "detail": "Any 2xx within 6 seconds. Redirects are not followed. Up to 5 retries, after about 1 minute, 5 minutes, 30 minutes, 2 hours and 6 hours.", "source": "https://docs.moonetix.com/postbacks#responses-and-retries" },
+      "ip_allowlist": { "detail": "187.124.177.111 and 2a02:4780:79:782c::1. User agent Moonetix-Postback/1.0.", "source": "https://docs.moonetix.com/postbacks#ip-addresses" },
+      "notes": "Test postbacks have a transaction_id that starts with test_ and offer_id 0."
+    },
+    {
+      "id": "adgate-media",
+      "name": "AdGate Media",
+      "website": "https://adgatemedia.com",
+      "checked": "2026-11",
+      "method": "GET",
+      "example": null,
+      "source": "https://docs.prodegeads.com/postbacks/postback-information",
+      "macros": [
+        { "concept": "user_id", "macro": "{s1}", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+        { "concept": "transaction_id", "macro": "{conversion_id}", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+        { "concept": "reward", "macro": "{points}", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+        { "concept": "amount", "macro": "{payout}", "note": "USD.", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+        { "concept": "status", "macro": "{state}", "note": "approved, rejected or pending. {status} is deprecated.", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+        { "concept": "offer_id", "macro": "{offer_id}", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+        { "concept": "ip", "macro": "{session_ip}", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+        { "concept": "country", "macro": "{country}", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+        { "concept": "sub_id", "macro": "{s2} ... {s5}", "source": "https://docs.prodegeads.com/postbacks/postback-information" }
+      ],
+      "signature": null,
+      "reversal": { "detail": "Include {state} in the URL to receive chargebacks and reversals. Without it, only approved conversions are sent.", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+      "response": { "detail": "HTTP 200. Otherwise up to 5 more attempts, 5 minutes apart.", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+      "ip_allowlist": { "detail": "52.42.57.125, 54.186.70.83, 52.39.181.185, 54.190.14.75, 52.11.36.128, 54.191.9.88, 3.21.111.51, 3.135.140.42, 3.133.245.65 (optional).", "source": "https://docs.prodegeads.com/postbacks/postback-information" },
+      "notes": "The documentation now lives on docs.prodegeads.com. It describes no signature; keep the postback URL unique and use the IP allowlist."
+    },
+    {
+      "id": "adgem",
+      "name": "AdGem",
+      "website": "https://adgem.com",
+      "checked": "2026-11",
+      "method": "GET (v2), POST JSON (v3)",
+      "example": null,
+      "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2",
+      "macros": [
+        { "concept": "user_id", "macro": "{player_id}", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+        { "concept": "transaction_id", "macro": "{transaction_id}", "note": "AdGem ID of the conversion. request_id is unique per postback.", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+        { "concept": "reward", "macro": "{amount}", "note": "Can be empty or null.", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+        { "concept": "amount", "macro": "{payout}", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+        { "concept": "offer_id", "macro": "{campaign_id}", "note": "{offer_id} exists for Offer API integrations.", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+        { "concept": "ip", "macro": "{ip}", "note": "Publisher-supplied in the click URL.", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+        { "concept": "country", "macro": "{country}", "note": "Publisher-supplied in the click URL.", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+        { "concept": "sub_id", "macro": "{c1} ... {c5}", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+        { "concept": "security", "macro": "verifier", "note": "Added after you generate a postback key, with request_id.", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" }
+      ],
+      "signature": {
+        "scheme": "HMAC-SHA256",
+        "location": "verifier query parameter (v2); Signature header (v3)",
+        "input": "v2: the full postback URL with the verifier parameter removed. v3: the request body.",
+        "key": "Postback secret key",
+        "detail": "v3 sends a JSON body with request_id and timestamp at the top and the conversion under data.",
+        "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v3"
+      },
+      "reversal": null,
+      "response": { "detail": "Any 2xx. Up to 3 attempts in total, 20 second timeout each.", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+      "ip_allowlist": { "detail": "Sent from a static IP. Ask your account manager for the production address.", "source": "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2" },
+      "notes": null
+    },
+    {
+      "id": "adjoe",
+      "name": "adjoe",
+      "website": "https://adjoe.io",
+      "checked": "2026-11",
+      "method": "GET",
+      "example": "https://example.com/example?sid={sid}&trans_uuid={trans_uuid}&user_uuid={user_uuid}&currency={currency}&coin_amount={coin_amount}&device_id={device_id}&sdk_app_id={sdk_app_id}",
+      "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/",
+      "macros": [
+        { "concept": "user_id", "macro": "{user_uuid}", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+        { "concept": "transaction_id", "macro": "{trans_uuid}", "note": "UUID v4.", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+        { "concept": "reward", "macro": "{coin_amount}", "note": "Integer.", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+        { "concept": "currency_name", "macro": "{currency}", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+        { "concept": "other", "macro": "{device_id}", "note": "no-deviceid when unavailable. Hash it as received.", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+        { "concept": "other", "macro": "{sdk_app_id}", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+        { "concept": "sub_id", "macro": "{publisher_sub_id1} ... {publisher_sub_id5}", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+        { "concept": "security", "macro": "{sid}", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" }
+      ],
+      "signature": {
+        "scheme": "SHA-1 (keyed by concatenation)",
+        "location": "sid query parameter, hex",
+        "input": "trans_uuid + user_uuid + currency + coin_amount + device_id + sdk_app_id + s2s_token",
+        "key": "S2S token from the Monetize Dashboard payout setup",
+        "detail": "Drop missing optional parameters from the concatenation and keep the order of the rest.",
+        "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/"
+      },
+      "reversal": null,
+      "response": { "detail": "200 after the sid is verified. 401 for a missing or wrong sid. 4xx and 5xx are retried for up to 4 days.", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+      "ip_allowlist": { "detail": "3.121.65.44, 18.185.166.67, 52.29.52.48.", "source": "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/" },
+      "notes": "Parameter names in the URL can be customized. No USD payout, IP or country parameter is documented."
+    },
+    {
+      "id": "ayet-studios",
+      "name": "ayeT-Studios",
+      "website": "https://www.ayetstudios.com",
+      "checked": "2026-11",
+      "method": "GET",
+      "example": null,
+      "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks",
+      "macros": [
+        { "concept": "user_id", "macro": "{external_identifier}", "note": "{user_id} is ayeT's internal ID.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "transaction_id", "macro": "{transaction_id}", "note": "Prefixed with r- on chargebacks.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "reward", "macro": "{currency_amount}", "note": "Negative on chargebacks.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "amount", "macro": "{payout_usd}", "note": "Negative on chargebacks.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "status", "macro": "{is_chargeback}", "note": "0 conversion, 1 chargeback. {chargeback_reason} when 1.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "offer_id", "macro": "{offer_id}", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "offer_name", "macro": "{offer_name}", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "ip", "macro": "{ip}", "note": "0.0.0.0 if unknown.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "sub_id", "macro": "{custom_1} ... {custom_5}", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+        { "concept": "security", "macro": "X-Ayetstudios-Security-Hash", "note": "Header, optional.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callback-verification/hmac-security-hash-optional" }
+      ],
+      "signature": {
+        "scheme": "HMAC-SHA256",
+        "location": "X-Ayetstudios-Security-Hash header, hex",
+        "input": "All request parameters sorted by key, values URL-encoded (space as +), joined as a query string",
+        "key": "Publisher API key",
+        "detail": "Optional. The PHP reference uses ksort and http_build_query before hash_hmac.",
+        "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callback-verification/hmac-security-hash-optional"
+      },
+      "reversal": { "detail": "Enable Reversal Callbacks on the placement. Reversals carry is_chargeback=1, the original transaction_id prefixed with r-, and negative amounts.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+      "response": { "detail": "Always HTTP 200. Otherwise resent 12 times over one hour.", "source": "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks" },
+      "ip_allowlist": null,
+      "notes": "Every macro also has a _sanitized variant."
+    },
+    {
+      "id": "bitlabs",
+      "name": "BitLabs",
+      "website": "https://bitlabs.ai",
+      "checked": "2026-11",
+      "method": "GET",
+      "example": null,
+      "source": "https://developer.bitlabs.ai/docs/callback-parameters",
+      "macros": [
+        { "concept": "user_id", "macro": "[%USER:UID%]", "note": "Up to 255 characters.", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "transaction_id", "macro": "[%TX%]", "note": "Use it to prevent double-booking.", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "reward", "macro": "[%VALUE:CURRENCY%]", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "amount", "macro": "[%VALUE:USD%]", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "status", "macro": "[%ACTIVITY:TYPE%]", "note": "COMPLETE, SCREENOUT, RECONCILIATION or START_BONUS.", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "other", "macro": "[%REF%]", "note": "Links a reconciliation to the original transaction.", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "offer_id", "macro": "[%OFFER:ID%]", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "offer_name", "macro": "[%OFFER:NAME%]", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "ip", "macro": "[%USER:IP_ADDRESS%]", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "country", "macro": "[%COUNTRY%]", "source": "https://developer.bitlabs.ai/docs/callback-parameters" },
+        { "concept": "security", "macro": "hash", "note": "Appended as &hash=.", "source": "https://developer.bitlabs.ai/docs/securing-callbacks-through-hashing" }
+      ],
+      "signature": {
+        "scheme": "HMAC-SHA1",
+        "location": "hash query parameter, hex",
+        "input": "The whole callback URL without the trailing &hash= value",
+        "key": "App secret key",
+        "detail": "Do not encode or decode the URL before hashing.",
+        "source": "https://developer.bitlabs.ai/docs/securing-callbacks-through-hashing"
+      },
+      "reversal": { "detail": "[%ACTIVITY:TYPE%] is RECONCILIATION and [%REF%] points to the original transaction. Values may be negative, positive or 0, so do not detect reconciliations by amount alone.", "source": "https://developer.bitlabs.ai/docs/general-reward-callbacks" },
+      "response": { "detail": "HTTP 200. Up to 10 retries after 1, 4, 9, 16, 25, 60, 120, 300, 300 and 300 seconds. 30 second timeout.", "source": "https://developer.bitlabs.ai/docs/callbacks" },
+      "ip_allowlist": { "detail": "20.76.54.40/29, 18.199.243.90, 18.157.62.114, 18.193.24.206.", "source": "https://developer.bitlabs.ai/docs/callbacks" },
+      "notes": null
+    },
+    {
+      "id": "lootably",
+      "name": "Lootably",
+      "website": "https://lootably.com",
+      "checked": "2026-11",
+      "method": "GET",
+      "example": null,
+      "source": "https://documentation.lootably.com/docs/postbacks",
+      "macros": [
+        { "concept": "user_id", "macro": "{userID}", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "transaction_id", "macro": "{transactionID}", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "reward", "macro": "{currencyReward}", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "amount", "macro": "{revenue}", "note": "USD.", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "status", "macro": "{status}", "note": "1 completed, 0 chargeback.", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "offer_id", "macro": "{offerID}", "note": "Also {numericOfferID}.", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "offer_name", "macro": "{offerName}", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "ip", "macro": "{ip}", "note": "IP when the user started the offer.", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "sub_id", "macro": "{sid2} ... {sid5}", "source": "https://documentation.lootably.com/docs/postbacks" },
+        { "concept": "security", "macro": "{hash}", "source": "https://documentation.lootably.com/docs/postbacks" }
+      ],
+      "signature": {
+        "scheme": "SHA-256 (keyed by concatenation)",
+        "location": "{hash} macro",
+        "input": "userID + ip + revenue + currencyReward + postback secret",
+        "key": "Postback secret of the placement",
+        "detail": "A plain hash with the secret appended, not an HMAC.",
+        "source": "https://documentation.lootably.com/docs/postbacks"
+      },
+      "reversal": { "detail": "status=0 marks a chargeback, but the docs note that postbacks are only sent with status 1 today.", "source": "https://documentation.lootably.com/docs/postbacks" },
+      "response": { "detail": "Return the body 1. Retries are off by default and can be set from 0 to 5.", "source": "https://documentation.lootably.com/docs/postbacks" },
+      "ip_allowlist": null,
+      "notes": null
+    },
+    {
+      "id": "monlix",
+      "name": "Monlix",
+      "website": "https://monlix.com",
+      "checked": "2026-11",
+      "method": "GET",
+      "example": null,
+      "source": "https://docs.monlix.com/docs/postback",
+      "macros": [
+        { "concept": "user_id", "macro": "{{userId}}", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "transaction_id", "macro": "{{transactionId}}", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "reward", "macro": "{{rewardValue}}", "note": "Conversion value times your currency multiplier.", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "currency_name", "macro": "{{rewardCurrency}}", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "amount", "macro": "{{payout}}", "note": "USD.", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "status", "macro": "{{status}}", "note": "1 valid, 2 invalid (chargeback).", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "offer_name", "macro": "{{taskName}}", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "ip", "macro": "{{userIp}}", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "country", "macro": "{{countryCode}}", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "sub_id", "macro": "{{subId}}", "source": "https://docs.monlix.com/docs/postback" },
+        { "concept": "security", "macro": "{{secretKey}}", "note": "Your site secret, sent as is.", "source": "https://docs.monlix.com/docs/postback" }
+      ],
+      "signature": {
+        "scheme": "Shared secret in the URL",
+        "location": "{{secretKey}} macro",
+        "input": "None. The secret itself is sent.",
+        "key": "Site secret key",
+        "detail": "Compare it in constant time and serve the endpoint over HTTPS only.",
+        "source": "https://docs.monlix.com/docs/postback"
+      },
+      "reversal": { "detail": "{{status}}=2 marks a chargeback.", "source": "https://docs.monlix.com/docs/postback" },
+      "response": null,
+      "ip_allowlist": null,
+      "notes": "Macros use double braces."
+    },
+    {
+      "id": "tapjoy",
+      "name": "Tapjoy (Unity)",
+      "website": "https://unity.com/products/tapjoy",
+      "checked": "2026-11",
+      "method": "GET (standard), POST JSON (improved)",
+      "example": "<callback_url>?snuid=<user_id>&currency=<currency>&mac_address=<mac_address>",
+      "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency",
+      "macros": [
+        { "concept": "user_id", "macro": "snuid", "note": "Improved format: user.id.", "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency" },
+        { "concept": "transaction_id", "macro": "id", "note": "Sent when a secret key is set. Improved format: id.", "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency" },
+        { "concept": "reward", "macro": "currency", "note": "The amount to add. Improved format: currency.reward.", "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency" },
+        { "concept": "amount", "macro": "rev", "note": "Improved format only. USD.", "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency" },
+        { "concept": "offer_name", "macro": "offer.name", "note": "Improved format only.", "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency" },
+        { "concept": "sub_id", "macro": "cp", "note": "Improved format only. Custom parameter set in the SDK.", "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency" },
+        { "concept": "security", "macro": "verifier", "note": "Improved format: X-Tapjoy-Signature header.", "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency" }
+      ],
+      "signature": {
+        "scheme": "MD5 (standard), HMAC-SHA256 (improved)",
+        "location": "verifier query parameter; X-Tapjoy-Signature header",
+        "input": "Standard: id:snuid:currency:secret_key. Improved: the request body.",
+        "key": "Virtual currency secret key",
+        "detail": "The improved format is enabled through Tapjoy support.",
+        "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency"
+      },
+      "reversal": null,
+      "response": { "detail": "200 when the currency was granted. 403 for a wrong verifier or unknown snuid stops retries. Anything else is retried every 5 minutes for up to 4 days. 5 second timeout, UTF-8 responses.", "source": "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency" },
+      "ip_allowlist": null,
+      "notes": "Self-managed currency callback."
+    }
+  ]
+}

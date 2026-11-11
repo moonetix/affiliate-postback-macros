@@ -1,0 +1,14 @@
+{
+  "name": "affiliate-postback-macros",
+  "version": "1.0.0",
+  "description": "S2S postback macros, signatures and reversal rules for tracking platforms and offerwall networks, with sources.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/build.mjs --check",
+    "test": "node --test"
+  }
+}
