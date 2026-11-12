@@ -1,0 +1,4 @@
+{
+  "about": "SHA-256 of the main text of every page cited as a source in macros.json. Written by scripts/watch-sources.mjs through .github/workflows/source-watch.yml; do not edit by hand.",
+  "sources": {}
+}
