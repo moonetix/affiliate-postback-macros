@@ -12,6 +12,23 @@ Maintained by [Moonetix](https://moonetix.com).
 
 Every platform names the same handful of things differently. The click ID is `{transaction_id}` on Everflow, `#reqid#` on CAKE and `{clickid}` on Voluum. A reversal is `status=2` on one offerwall, `is_chargeback=1` with an `r-` prefix on another, and not documented at all on a third. This sheet puts them side by side. The same content is in [data/macros.json](data/macros.json), validated against [a JSON schema](data/macros.schema.json), so you can feed it into your own tooling.
 
+The click ID macro for the offer URL and the payout macro for the outbound postback, per tracker, straight from the JSON:
+
+```sh
+curl -s https://raw.githubusercontent.com/moonetix/affiliate-postback-macros/main/data/macros.json | jq -r '
+  .tracking_platforms[] | [.name,
+    ([.macros[] | select(.direction == "click_url" and .concept == "click_id")][0].macro),
+    ([.macros[] | select(.direction == "outbound" and .concept == "amount")][0].macro)] | @tsv'
+```
+
+```text
+Affise    {clickid}         {sum}
+BeMob     {clickId}         {payout}
+Binom     {clickid}         {payout}
+CAKE      #reqid#           #price#
+...
+```
+
 ## Contents
 
 - [How to read the sheet](#how-to-read-the-sheet)
@@ -20,6 +37,7 @@ Every platform names the same handful of things differently. The click ID is `{t
 - [Part C: Cross-platform mapping](#part-c-cross-platform-mapping)
 - [Wiring notes](#wiring-notes)
 - [Using the data](#using-the-data)
+- [How the sheet stays current](#how-the-sheet-stays-current)
 - [Not covered yet](#not-covered-yet)
 - [About Moonetix](#about-moonetix)
 
@@ -32,6 +50,17 @@ Conversion data moves in three directions, and the tables label each macro with 
 | **Offer URL** | The platform adds its click ID to the advertiser's landing URL. | `https://offer.example/?s2={clickid}` |
 | **Inbound postback** | The advertiser or network reports the conversion back to the platform, server to server. | `https://tracker.example/postback?cid=...&payout=...` |
 | **Outbound postback** | The platform passes the conversion on to its affiliate or traffic source. | `https://source.example/conv?click={externalid}` |
+
+```mermaid
+sequenceDiagram
+    participant S as Traffic source or affiliate
+    participant P as Tracking platform
+    participant A as Advertiser
+    S->>P: Click with the source's own click ID
+    P->>A: Offer URL: the platform adds its click ID
+    A->>P: Inbound postback: conversion for that click ID
+    P->>S: Outbound postback: the source's click ID, payout, status
+```
 
 Part B covers the last hop for rewards publishers: the offerwall network calling your server so you can credit a user.
 
@@ -374,7 +403,7 @@ What an offerwall network sends to your server when a user earns or loses a rewa
 | [ayeT-Studios](#ayet-studios) | HMAC-SHA256 | All request parameters sorted by key, values URL-encoded (space as +), joined as a query string | X-Ayetstudios-Security-Hash header, hex | Publisher API key | [docs](https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callback-verification/hmac-security-hash-optional), checked November 2026 |
 | [BitLabs](#bitlabs) | HMAC-SHA1 | The whole callback URL without the trailing &hash= value | hash query parameter, hex | App secret key | [docs](https://developer.bitlabs.ai/docs/securing-callbacks-through-hashing), checked November 2026 |
 | [Lootably](#lootably) | SHA-256 (keyed by concatenation) | userID + ip + revenue + currencyReward + postback secret | {hash} macro | Postback secret of the placement | [docs](https://documentation.lootably.com/docs/postbacks), checked November 2026 |
-| [Monlix](#monlix) | Shared secret in the URL | None. The secret itself is sent. | {{secretKey}} macro | Site secret key | [docs](https://docs.monlix.com/docs/postback), checked November 2026 |
+| [Monlix](#monlix) | Shared secret in the URL | Nothing is signed: the secret itself is sent in the URL. | {{secretKey}} macro | Site secret key | [docs](https://docs.monlix.com/docs/postback), checked November 2026 |
 | [Tapjoy (Unity)](#tapjoy-unity) | MD5 (standard), HMAC-SHA256 (improved) | Standard: id:snuid:currency:secret_key. Improved: the request body. | verifier query parameter; X-Tapjoy-Signature header | Virtual currency secret key | [docs](https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency), checked November 2026 |
 
 ### Reversals and responses
@@ -418,7 +447,7 @@ https://yoursite.com/postback?user={user_id}&tx={transaction_id}&event={event_id
 | Other | `{app_id}` | Useful when one URL serves several offerwalls. | [docs](https://docs.moonetix.com/postbacks#macros) |
 | Security | `{hash}` |  | [docs](https://docs.moonetix.com/postbacks#verify) |
 
-**Signature.** HMAC-SHA256 over transaction_id:user_id:reward:status. Hash the values exactly as they arrive. The postback secret key is not the link hash salt. [docs](https://docs.moonetix.com/postbacks#verify)
+**Signature.** HMAC-SHA256. Signed input: transaction_id:user_id:reward:status. Hash the values exactly as they arrive. The postback secret key is not the link hash salt. [docs](https://docs.moonetix.com/postbacks#verify)
 
 **Source IPs.** 187.124.177.111 and 2a02:4780:79:782c::1. User agent Moonetix-Postback/1.0. [docs](https://docs.moonetix.com/postbacks#ip-addresses)
 
@@ -460,7 +489,7 @@ https://yoursite.com/postback?user={user_id}&tx={transaction_id}&event={event_id
 | Sub ID | `{c1} ... {c5}` |  | [docs](https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2) |
 | Security | `verifier` | Added after you generate a postback key, with request_id. | [docs](https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2) |
 
-**Signature.** HMAC-SHA256 over v2: the full postback URL with the verifier parameter removed. v3: the request body.. v3 sends a JSON body with request_id and timestamp at the top and the conversion under data. [docs](https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v3)
+**Signature.** HMAC-SHA256. Signed input: v2: the full postback URL with the verifier parameter removed. v3: the request body. v3 sends a JSON body with request_id and timestamp at the top and the conversion under data. [docs](https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v3)
 
 **Source IPs.** Sent from a static IP. Ask your account manager for the production address. [docs](https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2)
 
@@ -483,7 +512,7 @@ https://example.com/example?sid={sid}&trans_uuid={trans_uuid}&user_uuid={user_uu
 | Sub ID | `{publisher_sub_id1} ... {publisher_sub_id5}` |  | [docs](https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/) |
 | Security | `{sid}` |  | [docs](https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/) |
 
-**Signature.** SHA-1 (keyed by concatenation) over trans_uuid + user_uuid + currency + coin_amount + device_id + sdk_app_id + s2s_token. Drop missing optional parameters from the concatenation and keep the order of the rest. [docs](https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/)
+**Signature.** SHA-1 (keyed by concatenation). Signed input: trans_uuid + user_uuid + currency + coin_amount + device_id + sdk_app_id + s2s_token. Drop missing optional parameters from the concatenation and keep the order of the rest. [docs](https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/)
 
 **Source IPs.** 3.121.65.44, 18.185.166.67, 52.29.52.48. [docs](https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/)
 
@@ -506,7 +535,7 @@ https://example.com/example?sid={sid}&trans_uuid={trans_uuid}&user_uuid={user_uu
 | Sub ID | `{custom_1} ... {custom_5}` |  | [docs](https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks) |
 | Security | `X-Ayetstudios-Security-Hash` | Header, optional. | [docs](https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callback-verification/hmac-security-hash-optional) |
 
-**Signature.** HMAC-SHA256 over All request parameters sorted by key, values URL-encoded (space as +), joined as a query string. Optional. The PHP reference uses ksort and http_build_query before hash_hmac. [docs](https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callback-verification/hmac-security-hash-optional)
+**Signature.** HMAC-SHA256. Signed input: All request parameters sorted by key, values URL-encoded (space as +), joined as a query string. Optional. The PHP reference uses ksort and http_build_query before hash_hmac. [docs](https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callback-verification/hmac-security-hash-optional)
 
 **Notes.** Every macro also has a _sanitized variant.
 
@@ -528,7 +557,7 @@ https://example.com/example?sid={sid}&trans_uuid={trans_uuid}&user_uuid={user_uu
 | Country | `[%COUNTRY%]` |  | [docs](https://developer.bitlabs.ai/docs/callback-parameters) |
 | Security | `hash` | Appended as &hash=. | [docs](https://developer.bitlabs.ai/docs/securing-callbacks-through-hashing) |
 
-**Signature.** HMAC-SHA1 over The whole callback URL without the trailing &hash= value. Do not encode or decode the URL before hashing. [docs](https://developer.bitlabs.ai/docs/securing-callbacks-through-hashing)
+**Signature.** HMAC-SHA1. Signed input: The whole callback URL without the trailing &hash= value. Do not encode or decode the URL before hashing. [docs](https://developer.bitlabs.ai/docs/securing-callbacks-through-hashing)
 
 **Source IPs.** 20.76.54.40/29, 18.199.243.90, 18.157.62.114, 18.193.24.206. [docs](https://developer.bitlabs.ai/docs/callbacks)
 
@@ -549,7 +578,7 @@ https://example.com/example?sid={sid}&trans_uuid={trans_uuid}&user_uuid={user_uu
 | Sub ID | `{sid2} ... {sid5}` |  | [docs](https://documentation.lootably.com/docs/postbacks) |
 | Security | `{hash}` |  | [docs](https://documentation.lootably.com/docs/postbacks) |
 
-**Signature.** SHA-256 (keyed by concatenation) over userID + ip + revenue + currencyReward + postback secret. A plain hash with the secret appended, not an HMAC. [docs](https://documentation.lootably.com/docs/postbacks)
+**Signature.** SHA-256 (keyed by concatenation). Signed input: userID + ip + revenue + currencyReward + postback secret. A plain hash with the secret appended, not an HMAC. [docs](https://documentation.lootably.com/docs/postbacks)
 
 ### Monlix
 
@@ -569,7 +598,7 @@ https://example.com/example?sid={sid}&trans_uuid={trans_uuid}&user_uuid={user_uu
 | Sub ID | `{{subId}}` |  | [docs](https://docs.monlix.com/docs/postback) |
 | Security | `{{secretKey}}` | Your site secret, sent as is. | [docs](https://docs.monlix.com/docs/postback) |
 
-**Signature.** Shared secret in the URL over None. The secret itself is sent.. Compare it in constant time and serve the endpoint over HTTPS only. [docs](https://docs.monlix.com/docs/postback)
+**Signature.** Shared secret in the URL. Nothing is signed: the secret itself is sent in the URL. Compare it in constant time and serve the endpoint over HTTPS only. [docs](https://docs.monlix.com/docs/postback)
 
 **Notes.** Macros use double braces.
 
@@ -591,7 +620,7 @@ https://example.com/example?sid={sid}&trans_uuid={trans_uuid}&user_uuid={user_uu
 | Sub ID | `cp` | Improved format only. Custom parameter set in the SDK. | [docs](https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency) |
 | Security | `verifier` | Improved format: X-Tapjoy-Signature header. | [docs](https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency) |
 
-**Signature.** MD5 (standard), HMAC-SHA256 (improved) over Standard: id:snuid:currency:secret_key. Improved: the request body.. The improved format is enabled through Tapjoy support. [docs](https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency)
+**Signature.** MD5 (standard), HMAC-SHA256 (improved). Signed input: Standard: id:snuid:currency:secret_key. Improved: the request body. The improved format is enabled through Tapjoy support. [docs](https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency)
 
 **Notes.** Self-managed currency callback.
 
@@ -695,6 +724,10 @@ npm test                         # node --test
 
 The build checks the schema, unknown concepts, duplicate IDs, alphabetical order, and house style (no en or em dashes, no emoji). Edit the JSON, never the tables.
 
+## How the sheet stays current
+
+Vendors rewrite their docs without notice. On the 2nd of every month, [`source-watch.yml`](.github/workflows/source-watch.yml) fetches each page cited as a `source`, one request per second, and compares a hash of its main text with [data/source-hashes.json](data/source-hashes.json). Pages that changed are listed in a single open issue; a maintainer re-checks the entries that cite them and closes it. Run the same check locally with `node scripts/watch-sources.mjs --no-write`.
+
 ## Not covered yet
 
 We list a platform only when its public docs state the details. Pull requests are welcome for TUNE (HasOffers), Torox, CPX Research, TheoremReach, Wannads, TimeWall, Revlum, Notik and Upwall, with a link to the vendor page for every value. See [CONTRIBUTING.md](CONTRIBUTING.md), or use the **Add a platform** issue form.
@@ -705,4 +738,4 @@ MIT. See [LICENSE](LICENSE). Product names belong to their owners and are used o
 
 ## About Moonetix
 
-Moonetix is a pay-per-result affiliate network. Publishers add its offerwall to apps, games, websites and communities, and their users earn the publisher's own currency by completing offers. Postback reference: [docs.moonetix.com/postbacks](https://docs.moonetix.com/postbacks). Ready-made, tested handlers in four languages: [offerwall-postback-handlers](https://github.com/moonetix/offerwall-postback-handlers). Publisher sign-up: [moonetix.com/register](https://moonetix.com/register).
+Moonetix is a pay-per-result affiliate network. Publishers add its offerwall to apps, games, websites and communities, and their users earn the publisher's own currency by completing offers. Postback reference: [docs.moonetix.com/postbacks](https://docs.moonetix.com/postbacks). Ready-made, tested handlers in four languages: [offerwall-postback-handlers](https://github.com/moonetix/offerwall-postback-handlers). To send signed test postbacks in most of these formats to your own endpoint, with retries, reversals and forged signatures: [postback-tester](https://github.com/moonetix/postback-tester). Publisher sign-up: [moonetix.com/register](https://moonetix.com/register).

@@ -272,7 +272,9 @@ function renderPartB(data) {
       link(m.source),
     ])));
     if (n.signature) {
-      out.push('', `**Signature.** ${plain(n.signature.scheme)} over ${plain(n.signature.input)}. ${plain(n.signature.detail)} ${link(n.signature.source)}`);
+      const input = plain(n.signature.input || '').replace(/\.+$/, '');
+      const signed = !input ? '' : /^Nothing is signed/.test(input) ? ` ${input}.` : ` Signed input: ${input}.`;
+      out.push('', `**Signature.** ${plain(n.signature.scheme).replace(/\.+$/, '')}.${signed} ${plain(n.signature.detail)} ${link(n.signature.source)}`);
     }
     if (n.ip_allowlist) out.push('', `**Source IPs.** ${plain(n.ip_allowlist.detail)} ${link(n.ip_allowlist.source)}`);
     if (n.notes) out.push('', `**Notes.** ${plain(n.notes)}`);

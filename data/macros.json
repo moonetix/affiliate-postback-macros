@@ -613,7 +613,7 @@
       "signature": {
         "scheme": "Shared secret in the URL",
         "location": "{{secretKey}} macro",
-        "input": "None. The secret itself is sent.",
+        "input": "Nothing is signed: the secret itself is sent in the URL.",
         "key": "Site secret key",
         "detail": "Compare it in constant time and serve the endpoint over HTTPS only.",
         "source": "https://docs.monlix.com/docs/postback"
