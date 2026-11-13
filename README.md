@@ -7,10 +7,11 @@
 [![Data: JSON](https://img.shields.io/badge/data-macros.json-555.svg)](data/macros.json)
 [![Sources checked](https://img.shields.io/badge/sources%20checked-November%202026-0b7a75.svg)](#how-to-read-the-sheet)
 [![Maintained by Moonetix](https://img.shields.io/badge/maintained%20by-Moonetix-004ABB.svg)](https://moonetix.com)
+[![Live demo](https://img.shields.io/badge/live%20demo-moonetix.github.io-0e7a48.svg)](https://moonetix.github.io/affiliate-postback-macros/)
 
 Maintained by [Moonetix](https://moonetix.com).
 
-Every platform names the same handful of things differently. The click ID is `{transaction_id}` on Everflow, `#reqid#` on CAKE and `{clickid}` on Voluum. A reversal is `status=2` on one offerwall, `is_chargeback=1` with an `r-` prefix on another, and not documented at all on a third. This sheet puts them side by side. The same content is in [data/macros.json](data/macros.json), validated against [a JSON schema](data/macros.schema.json), so you can feed it into your own tooling.
+Every platform names the same handful of things differently. The click ID is `{transaction_id}` on Everflow, `#reqid#` on CAKE and `{clickid}` on Voluum. A reversal is `status=2` on one offerwall, `is_chargeback=1` with an `r-` prefix on another, and not documented at all on a third. This sheet puts them side by side. The same content is in [data/macros.json](data/macros.json), validated against [a JSON schema](data/macros.schema.json), so you can feed it into your own tooling. To search it or assemble an example postback URL in the browser, open the [live demo](https://moonetix.github.io/affiliate-postback-macros/).
 
 The click ID macro for the offer URL and the payout macro for the outbound postback, per tracker, straight from the JSON:
 
@@ -738,4 +739,4 @@ MIT. See [LICENSE](LICENSE). Product names belong to their owners and are used o
 
 ## About Moonetix
 
-Moonetix is an affiliate network. Publishers add its offerwall to apps, games, websites and communities, and their users earn the publisher's own currency by completing offers. Postback reference: [docs.moonetix.com/postbacks](https://docs.moonetix.com/postbacks). Ready-made, tested handlers in four languages: [offerwall-postback-handlers](https://github.com/moonetix/offerwall-postback-handlers). To send signed test postbacks in most of these formats to your own endpoint, with retries, reversals and forged signatures: [postback-tester](https://github.com/moonetix/postback-tester). Publisher sign-up: [moonetix.com/register](https://moonetix.com/register).
+Moonetix is an affiliate network. Publishers add its offerwall to apps, games, websites and communities, and their users earn the publisher's own currency by completing offers. Postback reference: [docs.moonetix.com/postbacks](https://docs.moonetix.com/postbacks). Ready-made, tested handlers in four languages: [offerwall-postback-handlers](https://github.com/moonetix/offerwall-postback-handlers). To send signed test postbacks in most of these formats to your own endpoint, with retries, reversals and forged signatures: [postback-tester](https://github.com/moonetix/postback-tester). Publisher sign-up: [moonetix.com/register](https://moonetix.com/register?from=github-affiliate-postback-macros).
