@@ -1,4 +1,437 @@
 {
   "about": "SHA-256 of the main text of every page cited as a source in macros.json. Written by scripts/watch-sources.mjs through .github/workflows/source-watch.yml; do not edit by hand.",
-  "sources": {}
+  "sources": {
+    "https://developer.bitlabs.ai/docs/callback-parameters": {
+      "sha256": "0bdead497d8a3dd32da8e82da0708e86c4101d75e6f453f8cc7a75281b133c40",
+      "chars": 6132,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bitlabs"
+      ]
+    },
+    "https://developer.bitlabs.ai/docs/callbacks": {
+      "sha256": "dc967d33bc109fcae3e90385bbdbb15325c3fdc26156ac8345163eceeb1ca081",
+      "chars": 3920,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bitlabs"
+      ]
+    },
+    "https://developer.bitlabs.ai/docs/general-reward-callbacks": {
+      "sha256": "940ed22698dc73384a1f67bf5c8e5617860b4219dd4bb96d37db83307e54bb3a",
+      "chars": 4841,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bitlabs"
+      ]
+    },
+    "https://developer.bitlabs.ai/docs/securing-callbacks-through-hashing": {
+      "sha256": "6a1a3c1c273bfeb79e89c80193bcf7dbc189ecca75f7daeaf01239bab98c0982",
+      "chars": 3938,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bitlabs"
+      ]
+    },
+    "https://doc.voluum.com/article/add-an-affiliate-network-to-voluum": {
+      "sha256": "e769e48f7b07fd8402b5b6908cc96b3171ae522277f6d0f45795e1c834058bdd",
+      "chars": 6006,
+      "changed": "2026-11-13",
+      "vendors": [
+        "voluum"
+      ]
+    },
+    "https://doc.voluum.com/article/parameters-in-postback-urls": {
+      "sha256": "f0ea3167ad9173f1440139ecba397c4889964d9aa5d1ca32dfec01b4c1964880",
+      "chars": 4358,
+      "changed": "2026-11-13",
+      "vendors": [
+        "voluum"
+      ]
+    },
+    "https://doc.voluum.com/article/pass-information-to-an-affiliate-network": {
+      "sha256": "88251cafff87d5bbeabd6ac4d1b6c2ea5bca433ad5e3cc3a6e50c12f84a44d5c",
+      "chars": 2188,
+      "changed": "2026-11-13",
+      "vendors": [
+        "voluum"
+      ]
+    },
+    "https://doc.voluum.com/article/traffic-source-postback-url": {
+      "sha256": "806ccf5fcaf5aec7fba49c20eb3ff3b73222a5a0624daba0f148d3ba3c312aa6",
+      "chars": 6381,
+      "changed": "2026-11-13",
+      "vendors": [
+        "voluum"
+      ]
+    },
+    "https://doc.voluum.com/article/upselling-tracking-subsequent-conversions": {
+      "sha256": "b9082b6f12ee51943b42dca0f7965116fc8d838a7b6fc87c34f3f9a622f2c25e",
+      "chars": 2570,
+      "changed": "2026-11-13",
+      "vendors": [
+        "voluum"
+      ]
+    },
+    "https://doc.voluum.com/en/submitting_postback_url.html": {
+      "sha256": "b2b45e1d6009b33bc1bb50b00d1541536c2131358bb227ac1d5e4ca04464abed",
+      "chars": 5709,
+      "changed": "2026-11-13",
+      "vendors": [
+        "voluum"
+      ]
+    },
+    "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2": {
+      "sha256": "013c5039571dfff68a1eed89c733b0290e06e36cb23798166439ba275954cbad",
+      "chars": 13793,
+      "changed": "2026-11-13",
+      "vendors": [
+        "adgem"
+      ]
+    },
+    "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v3": {
+      "sha256": "57ee747ea26dbb1a1c0f1cda38c0f77664ea4bd42353ec41d3e8495ece45b944",
+      "chars": 14341,
+      "changed": "2026-11-13",
+      "vendors": [
+        "adgem"
+      ]
+    },
+    "https://docs.adjoe.io/rewarded-solutions/setting-up-rewarding/server-to-server-payouts/": {
+      "sha256": "0dd6dafa3e3ddb591ffa7c5152583201cf15ad32676c04da7971cb979bca199d",
+      "chars": 14693,
+      "changed": "2026-11-13",
+      "vendors": [
+        "adjoe"
+      ]
+    },
+    "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callback-verification/hmac-security-hash-optional": {
+      "sha256": "c719fa69bb7f11089452e0a2521940531eee44185984562420bee17625a7f529",
+      "chars": 2350,
+      "changed": "2026-11-13",
+      "vendors": [
+        "ayet-studios"
+      ]
+    },
+    "https://docs.ayetstudios.com/v/product-docs/callbacks-and-testing/callbacks/offerwall-callbacks": {
+      "sha256": "7537e41c2e49c5e8ea4aa47ef4592924e9199de2f9915dbc794a2661da1aff45",
+      "chars": 6238,
+      "changed": "2026-11-13",
+      "vendors": [
+        "ayet-studios"
+      ]
+    },
+    "https://docs.bemob.com/en/offer-settings": {
+      "sha256": "14ac281cb97886a1fd80a14d73d75942486eeecc22a9fb40bacbfb9d31ef3beb",
+      "chars": 6850,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bemob"
+      ]
+    },
+    "https://docs.bemob.com/en/postback-settings-of-affiliate-network": {
+      "sha256": "32d7293cb906922f120fa096561730256238e0886273eb8d4b2a70f3192730fe",
+      "chars": 7662,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bemob"
+      ]
+    },
+    "https://docs.bemob.com/en/postback-statuses": {
+      "sha256": "48976f07e1d01df441ca3b9d95aff2ed2d4a5a37113046969ad3269323b3ac7e",
+      "chars": 4713,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bemob"
+      ]
+    },
+    "https://docs.binom.org/affiliate-networks.php": {
+      "sha256": "b78b8aece694389d5e6ef01b344b64432db7aec4c318ec7b7c98bfdf88cc4d13",
+      "chars": 2108,
+      "changed": "2026-11-13",
+      "vendors": [
+        "binom"
+      ]
+    },
+    "https://docs.binom.org/conv-to-source.php": {
+      "sha256": "3630fdfdabf18404001bba28a5422826db329cb92214edeab9088758f71c2984",
+      "chars": 4548,
+      "changed": "2026-11-13",
+      "vendors": [
+        "binom"
+      ]
+    },
+    "https://docs.binom.org/postback-v2.php": {
+      "sha256": "464634209f1969446a9572837d0717b66008f80b119ffd8ed3e3ee2fd467437b",
+      "chars": 4832,
+      "changed": "2026-11-13",
+      "vendors": [
+        "binom"
+      ]
+    },
+    "https://docs.binom.org/tokens-v2.php": {
+      "sha256": "40c27fb54e5997527f48ffa6ad379b10cba998992d08d935c0db62dd795c0d01",
+      "chars": 4551,
+      "changed": "2026-11-13",
+      "vendors": [
+        "binom"
+      ]
+    },
+    "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html": {
+      "sha256": "08e2b60066ab65ddf69875cdf1bb2f91e9c86134581207518c28a39f479b2958",
+      "chars": 4423,
+      "changed": "2026-11-13",
+      "vendors": [
+        "keitaro"
+      ]
+    },
+    "https://docs.keitaro.io/en/conversions-and-postback/adding-affiliate-networks.html": {
+      "sha256": "4a0a8ce62d5c651f1f7c23f91f0ed5eee135f10d1982c9d9c36ed7e4ec212ccb",
+      "chars": 7489,
+      "changed": "2026-11-13",
+      "vendors": [
+        "keitaro"
+      ]
+    },
+    "https://docs.keitaro.io/en/conversions-and-postback/postback.html": {
+      "sha256": "f45abb20e1ae2dbdac38861f128379c91a1e55a567669f9f084534d995e04e5b",
+      "chars": 9387,
+      "changed": "2026-11-13",
+      "vendors": [
+        "keitaro"
+      ]
+    },
+    "https://docs.monlix.com/docs/postback": {
+      "sha256": "977b437d938d045055dcf3b168cfb6b4ddd36c355aa04da1281a47307c026593",
+      "chars": 892,
+      "changed": "2026-11-13",
+      "vendors": [
+        "monlix"
+      ]
+    },
+    "https://docs.moonetix.com/credits-and-reversals": {
+      "sha256": "8eb213a64a143b69d66337c3ed98c4fb855a20c50e092d83d4748110528a6ee6",
+      "chars": 4103,
+      "changed": "2026-11-13",
+      "vendors": [
+        "moonetix"
+      ]
+    },
+    "https://docs.moonetix.com/postbacks": {
+      "sha256": "266bb5734b3f3daee3a324b52f4c3b86b949097728b474f493153948ecfa1638",
+      "chars": 7841,
+      "changed": "2026-11-13",
+      "vendors": [
+        "moonetix"
+      ]
+    },
+    "https://docs.prodegeads.com/postbacks/postback-information": {
+      "sha256": "ba72fdc261966f76538e4c39c450b676bb063d7b9b4043cf3e3a566b8f466f4d",
+      "chars": 6257,
+      "changed": "2026-11-13",
+      "vendors": [
+        "adgate-media"
+      ]
+    },
+    "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency": {
+      "sha256": "e0ffbad1b80da61c23a79e5f94bae75866818777659ec8b369c3f912db237154",
+      "chars": 14377,
+      "changed": "2026-11-13",
+      "vendors": [
+        "tapjoy"
+      ]
+    },
+    "https://documentation.lootably.com/docs/postbacks": {
+      "sha256": "588dbef539d9db848a0b763fa3ec24936e1d9f3af7ae0c89c711b11addb88633",
+      "chars": 5568,
+      "changed": "2026-11-13",
+      "vendors": [
+        "lootably"
+      ]
+    },
+    "https://help-center.affise.com/en/articles/6474604-set-up-s2s-integration-with-advertisers": {
+      "sha256": "6474265bacb7c114dd42fd2d99cc9624e4000f102b5f519b61cfc86eb93b9598",
+      "chars": 2185,
+      "changed": "2026-11-13",
+      "vendors": [
+        "affise"
+      ]
+    },
+    "https://help-center.affise.com/en/articles/6474898-advertiser-tracking-url-macros": {
+      "sha256": "f82ee83db9daf16d2b9e7b71f6f23032a64b023c9524beee45037e1c33fc291e",
+      "chars": 1527,
+      "changed": "2026-11-13",
+      "vendors": [
+        "affise"
+      ]
+    },
+    "https://help-center.affise.com/en/articles/6475468-affise-postback-url-parameters": {
+      "sha256": "7b8f71a91ab6b9f92592285b7c74a5a6a4a3ad42dfc1dafe54f7ec6394e7327d",
+      "chars": 1454,
+      "changed": "2026-11-13",
+      "vendors": [
+        "affise"
+      ]
+    },
+    "https://help-center.affise.com/en/articles/6476587-server-postback-errors": {
+      "sha256": "579472b4eaaa20d7bba52d0f67cde02c1aa6565f986359647dd1a9314d11e080",
+      "chars": 8441,
+      "changed": "2026-11-13",
+      "vendors": [
+        "affise"
+      ]
+    },
+    "https://help-center.affise.com/en/articles/6483741-affiliate-postback-url-macros": {
+      "sha256": "e85435b04529807793b790bd2d027e7d553fc69273f0bb82b27af4df961a6780",
+      "chars": 2192,
+      "changed": "2026-11-13",
+      "vendors": [
+        "affise"
+      ]
+    },
+    "https://help.bemob.com/docs/double-postbacks-and-postbacks-from-white-ips": {
+      "sha256": "d5988a21c0f733a1ba28a2ed568c96184ddb85a97482cea76ece9e5b767f0454",
+      "chars": 1645,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bemob"
+      ]
+    },
+    "https://help.bemob.com/docs/postback-settings-of-a-traffic-source": {
+      "sha256": "a07df5aa83185a824cb4c8a9fe58e595a21c73a0aa32cf0a66073ec173dfdac0",
+      "chars": 6369,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bemob"
+      ]
+    },
+    "https://help.bemob.com/docs/send-postbacks-for-selected-statuses": {
+      "sha256": "813391d55821aa9a963ca6dc4fb086937155f548f1fb64f0e17bae57283a3e8c",
+      "chars": 2565,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bemob"
+      ]
+    },
+    "https://help.redtrack.io/?p=21537": {
+      "sha256": "5adeb7f24dd588ce5efa413aefc244f0d0f9331456b326a5faed58bb24a146d5",
+      "chars": 2959,
+      "changed": "2026-11-13",
+      "vendors": [
+        "redtrack"
+      ]
+    },
+    "https://help.redtrack.io/?p=423": {
+      "sha256": "27e8b5bce659d27cf4a53e38fccebc9523531218fbc87add57c06f107db7ddd2",
+      "chars": 13097,
+      "changed": "2026-11-13",
+      "vendors": [
+        "redtrack"
+      ]
+    },
+    "https://help.redtrack.io/?p=9054": {
+      "sha256": "09cf978f13aee9a6f9e0448885c10f8ee3b96f3ff216eb3baf38f268a370adda",
+      "chars": 2970,
+      "changed": "2026-11-13",
+      "vendors": [
+        "redtrack"
+      ]
+    },
+    "https://help.redtrack.io/knowledgebase/adding-traffic-channel/": {
+      "sha256": "4506f4daaf3a213c9556f88489e45eb38caad6f517b52650563cbe759dc55264",
+      "chars": 4272,
+      "changed": "2026-11-13",
+      "vendors": [
+        "redtrack"
+      ]
+    },
+    "https://help.redtrack.io/knowledgebase/kb/basic-setup-9785/offer-sources-brand-related-settings-9830/postback-protection/": {
+      "sha256": "58b65fb45f7262b5341bf9ae84885b44310dd59c6fe63a4559a8f458fc3814c5",
+      "chars": 1306,
+      "changed": "2026-11-13",
+      "vendors": [
+        "redtrack"
+      ]
+    },
+    "https://help.redtrack.io/knowledgebase/tracking-event-types/": {
+      "sha256": "5979824744ddfab02bb99d1ac16800243105e2a29a99f4c50f3878682e01a8fa",
+      "chars": 16314,
+      "changed": "2026-11-13",
+      "vendors": [
+        "redtrack"
+      ]
+    },
+    "https://helpdesk.everflow.io/collaborator/managing-postbacks-as-a-partner": {
+      "sha256": "b9982e30816f49b9357394c1bd70635a1d1e7281452179db166b274e2366d0d4",
+      "chars": 9272,
+      "changed": "2026-11-13",
+      "vendors": [
+        "everflow"
+      ]
+    },
+    "https://helpdesk.everflow.io/customer/accessing-editing-s2s-postback-urls": {
+      "sha256": "ff8bac243ec8b90c696bfae4caa70b47efe03e765261c7f0fe1c9a1408680b08",
+      "chars": 21789,
+      "changed": "2026-11-13",
+      "vendors": [
+        "everflow"
+      ]
+    },
+    "https://helpdesk.everflow.io/customer/ip-domain-whitelisting-for-advertisers": {
+      "sha256": "ba3ec2c804edf725bd1b73695c46a3e3e8d85fd4ff57659b527ea36e2727cf17",
+      "chars": 5401,
+      "changed": "2026-11-13",
+      "vendors": [
+        "everflow"
+      ]
+    },
+    "https://helpdesk.everflow.io/customer/your-guide-to-parameters-macros": {
+      "sha256": "24610f610c269d60ed95e04a5b86b9fed473e3c95e3a67397cb6243e98135742",
+      "chars": 24440,
+      "changed": "2026-11-13",
+      "vendors": [
+        "everflow"
+      ]
+    },
+    "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic": {
+      "sha256": "c33d02ebe5d7940bbaf94f5e3ab8929bbd3f3c7322157203602fa1297dbe90b4",
+      "chars": 1625,
+      "changed": "2026-11-13",
+      "vendors": [
+        "cake"
+      ]
+    },
+    "https://support.getcake.com/support/solutions/articles/5000545795-how-to-whitelist-conversion-pixel-ip-addresses": {
+      "sha256": "00348b84bdb6ec634ce80e6c90cc6ab48d092064cdce991e0aab088e7ee33437",
+      "chars": 1545,
+      "changed": "2026-11-13",
+      "vendors": [
+        "cake"
+      ]
+    },
+    "https://support.getcake.com/support/solutions/articles/5000545957-how-to-set-up-a-revshare": {
+      "sha256": "0e04fe84f61a9600d5dbaec1d18766663374b46475595303daf1a50288b2c584",
+      "chars": 2801,
+      "changed": "2026-11-13",
+      "vendors": [
+        "cake"
+      ]
+    },
+    "https://support.getcake.com/support/solutions/articles/5000546096-how-affiliates-can-use-tokens-to-send-dynamic-values-in-pixels": {
+      "sha256": "35e35e4a351655d4745021796c5125c8d85c765b68ce89f42a5f33655b513757",
+      "chars": 2795,
+      "changed": "2026-11-13",
+      "vendors": [
+        "cake"
+      ]
+    },
+    "https://support.getcake.com/support/solutions/articles/5000546408-how-to-implement-server-to-server-tracking-using-a-postback-url": {
+      "sha256": "4f44b7d7daa606050ec055a1c1885eb40859f2b6ea68ef6fa21dd07b43ab0621",
+      "chars": 7018,
+      "changed": "2026-11-13",
+      "vendors": [
+        "cake"
+      ]
+    }
+  }
 }
