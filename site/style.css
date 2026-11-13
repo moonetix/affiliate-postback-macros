@@ -1,0 +1,71 @@
+[hidden]{display:none !important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:absolute;left:16px;top:-48px;background:var(--panel);color:var(--ink);padding:8px 12px;border-radius:8px;border:1px solid var(--edge);z-index:10}
+.skip:focus{top:8px}
+button:focus-visible,summary:focus-visible,pre:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+input::placeholder{color:var(--muted);opacity:1}
+h2{font-size:22px;line-height:1.3;margin:0 0 8px}
+h4{font-size:15px;margin:18px 0 8px}
+.small{font-size:13px}
+.block{display:block}
+.warn{color:var(--warn);font-weight:600}
+.stats{list-style:none;display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:16px 0 0}
+.section{margin-top:32px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.builder{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);margin-top:16px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{font-weight:600;font-size:14px;padding:0;margin-bottom:6px}
+.scroll{overflow-x:auto}
+.params{min-width:640px;font-size:14px}
+.params td{vertical-align:middle}
+.params td:first-child{width:52px}
+.params input[type=checkbox]{width:20px;height:20px;min-height:0;margin:0;accent-color:var(--brand)}
+.params .pname{min-height:36px;padding:6px 10px;font:14px/1.3 var(--mono);max-width:200px}
+#b-optional-row{margin:0 0 8px}
+.check{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:14px;cursor:pointer;min-height:32px}
+.check input{width:18px;height:18px;min-height:0;margin:0;accent-color:var(--brand)}
+#b-fixed{margin:10px 0 0;overflow-wrap:anywhere}
+.out-label{font-weight:600;font-size:14px;margin:0 0 6px}
+pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font:13px/1.6 var(--mono);background:var(--bg2);border:1px solid var(--edge);border-radius:10px;padding:12px 14px}
+.url{font-size:14px}
+.u-base,.u-name,.u-sep{color:var(--ink)}
+.u-val{color:var(--chip-ink);font-weight:700}
+.actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.notes{margin-top:8px}
+.facts{display:grid;grid-template-columns:minmax(0,1fr);gap:4px 16px;margin:12px 0 0;font-size:14px}
+.facts dt{color:var(--muted);font-weight:600;margin-top:8px}
+.facts dd{margin:0;overflow-wrap:anywhere}
+.plain{margin:0;padding-left:18px}
+.plain li{margin:2px 0}
+.filters{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:16px 0 12px}
+.bar p{margin:0}
+.views{display:flex;gap:6px}
+.list{display:grid;gap:12px}
+.entry{padding:0}
+.entry summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:16px 20px 16px 44px;position:relative;border-radius:var(--radius)}
+.entry summary::-webkit-details-marker{display:none}
+.entry summary::before{content:"";position:absolute;left:20px;top:22px;width:8px;height:8px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(-45deg)}
+.entry[open] summary::before{transform:rotate(45deg);top:20px}
+.entry .name{font-weight:700;font-size:17px}
+.entry .sum{flex-basis:100%;font-size:14px}
+.chip.tracking{background:var(--bg2);color:var(--ink);border-color:var(--edge)}
+.entry .body{padding:0 20px 20px;border-top:1px solid var(--edge)}
+.meta{margin:14px 0 0;color:var(--muted);font-size:14px}
+.example{margin-top:10px}
+.macros{min-width:600px;font-size:14px}
+.macros code{overflow-wrap:anywhere}
+tr.hit td{background:var(--chip)}
+.src{white-space:nowrap}
+.small-btn{min-height:36px;margin-top:8px}
+.files{margin:8px 0 12px;padding-left:18px}
+.files li{margin:6px 0}
+@media (min-width:640px){
+  .builder{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .builder .full{grid-column:1/-1}
+  .filters{grid-template-columns:2fr 1fr}
+  .entry .sum{flex-basis:auto;margin-left:auto}
+  .facts{grid-template-columns:140px minmax(0,1fr)}
+  .facts dt{margin-top:0}
+}
+@media (max-width:640px){.entry summary{padding:14px 16px 14px 40px}.entry summary::before{left:16px}.entry .body{padding:0 16px 16px}}
