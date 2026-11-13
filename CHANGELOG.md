@@ -2,6 +2,17 @@
 
 All notable changes to the data and tooling. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] - 2026-11-13
+
+### Added
+
+- 21 offerwall and survey networks, each read from the vendor's public documentation and linked to it: AdBreak Media, AppsPrize (AppSamurai), Besitos, BitcoTasks, Cherries, CPAlead, Digital Turbine (DT Offer Wall), inBrain.ai, MM Wall, MyChips (LoyaltyPlay), Offery, Playfull, Prime Earn, PubScale, RapidoReach, TapResearch, TheoremReach, Unity LevelPlay (ironSource), UPWALL, Wannads, YourSurveys. The sheet now covers 30 networks.
+- Every new source page was fetched with the source watch before it was cited, so the monthly check can read it.
+
+### Notes
+
+- Networks that document their postback only inside a publisher dashboard are not listed, because every fact here has to link to a page anyone can open.
+
 ## [1.1.0] - 2026-11-12
 
 ### Added

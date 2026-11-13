@@ -6,8 +6,8 @@ abstract: "S2S postback macros, parameters, signature schemes and reversal rules
 authors:
   - name: "Moonetix"
     website: "https://moonetix.com"
-version: 1.1.0
-date-released: 2026-11-12
+version: 1.2.0
+date-released: 2026-11-13
 license: MIT
 repository-code: "https://github.com/moonetix/affiliate-postback-macros"
 url: "https://docs.moonetix.com/postbacks"
