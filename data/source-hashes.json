@@ -1,6 +1,38 @@
 {
   "about": "SHA-256 of the main text of every page cited as a source in macros.json. Written by scripts/watch-sources.mjs through .github/workflows/source-watch.yml; do not edit by hand.",
   "sources": {
+    "https://appsamurai.com/help/appsprize-using-the-sdk/": {
+      "sha256": "b3a570a9f48f8a86abbb9664372cf46a24212ebac555fa23498fd8481d4ec202",
+      "chars": 25588,
+      "changed": "2026-11-13",
+      "vendors": [
+        "appsprize"
+      ]
+    },
+    "https://bitcotasks.com/documentations": {
+      "sha256": "570988d43fa39e38dbd8ab829b27faf72477e42151d565a4133eae0fbe9d8708",
+      "chars": 112784,
+      "changed": "2026-11-13",
+      "vendors": [
+        "bitcotasks"
+      ]
+    },
+    "https://cherries.readme.io/docs/hashing": {
+      "sha256": "74c8bd9256d22da324b2631669823eab39a22441f15c25c47c1845ffd7912f25",
+      "chars": 1528,
+      "changed": "2026-11-13",
+      "vendors": [
+        "cherries"
+      ]
+    },
+    "https://cherries.readme.io/docs/redirects": {
+      "sha256": "7c91f60e61c66d0049dd88e6f6fe74f9926d2ffdce1b3fc4514b1fae0cd3050e",
+      "chars": 2371,
+      "changed": "2026-11-13",
+      "vendors": [
+        "cherries"
+      ]
+    },
     "https://developer.bitlabs.ai/docs/callback-parameters": {
       "sha256": "0bdead497d8a3dd32da8e82da0708e86c4101d75e6f453f8cc7a75281b133c40",
       "chars": 6132,
@@ -79,6 +111,14 @@
       "changed": "2026-11-13",
       "vendors": [
         "voluum"
+      ]
+    },
+    "https://docs.adbreakmedia.com/monetization/postback": {
+      "sha256": "cf414260745fd3db94540855a84668526e2fbe7bd97f5e22d1827e543a49135f",
+      "chars": 4206,
+      "changed": "2026-11-13",
+      "vendors": [
+        "adbreak-media"
       ]
     },
     "https://docs.adgem.com/docs/integrate/reward-mechanism/postbacks-v2": {
@@ -177,6 +217,30 @@
         "binom"
       ]
     },
+    "https://docs.digitalturbine.com/dt-offer-wall/task-specific-guides/rewarding-your-users/server-side-rewarding": {
+      "sha256": "30c5937f77be4e55e7d965259427e01e792a0637b79da74afa90f002dc3a8b7d",
+      "chars": 8551,
+      "changed": "2026-11-13",
+      "vendors": [
+        "digital-turbine"
+      ]
+    },
+    "https://docs.inbrain.ai/docs/offers/callbacks/index.html": {
+      "sha256": "35788e0a639371069c734ea7144336eed380bd9f52d805e20e25a273a1a4fcc4",
+      "chars": 3174,
+      "changed": "2026-11-13",
+      "vendors": [
+        "inbrain"
+      ]
+    },
+    "https://docs.inbrain.ai/docs/survey-link/specifications/s2s-callbacks/index.html": {
+      "sha256": "125841fdf4aa0d6c30d7a569aa7648268b0ce2e63c1baa20bdf0d2abc68cf6a0",
+      "chars": 4263,
+      "changed": "2026-11-13",
+      "vendors": [
+        "inbrain"
+      ]
+    },
     "https://docs.keitaro.io/en/campaigns-and-streams/s2s-postback-placeholders.html": {
       "sha256": "08e2b60066ab65ddf69875cdf1bb2f91e9c86134581207518c28a39f479b2958",
       "chars": 4423,
@@ -225,12 +289,108 @@
         "moonetix"
       ]
     },
+    "https://docs.mychips.io/reward-handling/deduction-s2s-webhook-postback": {
+      "sha256": "62816c2d09b68e48ff66cd68c56335f747b00ef22d48bbdd8a5e432c4aeb94bd",
+      "chars": 2173,
+      "changed": "2026-11-13",
+      "vendors": [
+        "mychips"
+      ]
+    },
+    "https://docs.mychips.io/reward-handling/rejected-s2s-webhook-postback": {
+      "sha256": "5d2d06316e590aa29b76e3483e70f75c0958737a99a8c5905f056d0289341f5d",
+      "chars": 2359,
+      "changed": "2026-11-13",
+      "vendors": [
+        "mychips"
+      ]
+    },
+    "https://docs.mychips.io/reward-handling/validating-the-webhook-s2s": {
+      "sha256": "8f033c0aa04b7298a0313766a752bf61f7ad2fbbbf790c9967f0700f770b695b",
+      "chars": 7107,
+      "changed": "2026-11-13",
+      "vendors": [
+        "mychips"
+      ]
+    },
+    "https://docs.mychips.io/reward-handling/webhook-s2s-postback": {
+      "sha256": "d253a643f5e100a718004ecbfac9dcf1ede94662503381d09dbcb3e3c015df42",
+      "chars": 1939,
+      "changed": "2026-11-13",
+      "vendors": [
+        "mychips"
+      ]
+    },
+    "https://docs.playfull.com/offerwall/hosted": {
+      "sha256": "759c77d47bac00d9238c9272a1d6ce412f90f0c859d34ffae9b79ffc280a7014",
+      "chars": 5439,
+      "changed": "2026-11-13",
+      "vendors": [
+        "playfull"
+      ]
+    },
+    "https://docs.primeearn.com/integration/postbacks": {
+      "sha256": "7be104c09236c5da024d9e841c19d207611cc908a406327fb9d369fbc066cb34",
+      "chars": 13000,
+      "changed": "2026-11-13",
+      "vendors": [
+        "prime-earn"
+      ]
+    },
+    "https://docs.primeearn.com/surveys/faq": {
+      "sha256": "6f58469c7b5a102759918ce375136c67e88911bc9a7ea4d4449c8da2e23060db",
+      "chars": 11743,
+      "changed": "2026-11-13",
+      "vendors": [
+        "prime-earn"
+      ]
+    },
+    "https://docs.primeearn.com/surveys/iframe": {
+      "sha256": "f663854c47763609868416dd1fce262576e26930ac70f05e4263f7c3e3415790",
+      "chars": 5441,
+      "changed": "2026-11-13",
+      "vendors": [
+        "prime-earn"
+      ]
+    },
     "https://docs.prodegeads.com/postbacks/postback-information": {
       "sha256": "ba72fdc261966f76538e4c39c450b676bb063d7b9b4043cf3e3a566b8f466f4d",
       "chars": 6257,
       "changed": "2026-11-13",
       "vendors": [
         "adgate-media"
+      ]
+    },
+    "https://docs.rapidoreach.com/docs/v2/api/publisher-offers-callbacks": {
+      "sha256": "7f559c2fe921b9a118dae7f189c6da561c5d2b669c2e966030396f409e3f591f",
+      "chars": 5136,
+      "changed": "2026-11-13",
+      "vendors": [
+        "rapidoreach"
+      ]
+    },
+    "https://docs.rapidoreach.com/docs/v2/sdk/callbacks": {
+      "sha256": "de97d2d48aa9c3a2f24db613a5d29b477cc64e26e119740878411c6b00031b4c",
+      "chars": 2642,
+      "changed": "2026-11-13",
+      "vendors": [
+        "rapidoreach"
+      ]
+    },
+    "https://docs.unity.com/en-us/grow/levelplay/platform/settings/event-handlers": {
+      "sha256": "da7c7f47e01c7acfa9f6f54910a8627b84aafa09905fc524cce1332d35b6874b",
+      "chars": 6890,
+      "changed": "2026-11-13",
+      "vendors": [
+        "unity-levelplay"
+      ]
+    },
+    "https://docs.unity.com/en-us/grow/levelplay/platform/settings/server-to-server-callback": {
+      "sha256": "956e8a8e5e8ca5dee0e579fe81c5bef8681c9eba21110f7e4372915f04e3038b",
+      "chars": 4831,
+      "changed": "2026-11-13",
+      "vendors": [
+        "unity-levelplay"
       ]
     },
     "https://docs.unity.com/en-us/grow/offerwall/monetization/virtual-currency/self-managed-currency": {
@@ -274,8 +434,8 @@
       ]
     },
     "https://help-center.affise.com/en/articles/6476587-server-postback-errors": {
-      "sha256": "579472b4eaaa20d7bba52d0f67cde02c1aa6565f986359647dd1a9314d11e080",
-      "chars": 8441,
+      "sha256": "374d9076b8a8992b0498ca8bb18f66fc1af07aa200cab3113bf6dfc8fb7431bf",
+      "chars": 8411,
       "changed": "2026-11-13",
       "vendors": [
         "affise"
@@ -311,6 +471,22 @@
       "changed": "2026-11-13",
       "vendors": [
         "bemob"
+      ]
+    },
+    "https://help.besitoscorp.com/en/articles/11106589-postback-setup": {
+      "sha256": "b09b79509a664ea35c052cf26c633c2ae123f19828095e473e931cded9540b6e",
+      "chars": 5862,
+      "changed": "2026-11-13",
+      "vendors": [
+        "besitos"
+      ]
+    },
+    "https://help.besitoscorp.com/en/articles/11794071-postback-data": {
+      "sha256": "a72cd31ed2b507abf0979875471ac5e43266287deb14ed9e0394f016689665ef",
+      "chars": 4921,
+      "changed": "2026-11-13",
+      "vendors": [
+        "besitos"
       ]
     },
     "https://help.redtrack.io/?p=21537": {
@@ -393,6 +569,54 @@
         "everflow"
       ]
     },
+    "https://make-money.gitbook.io/integration/overview/postback-hashing": {
+      "sha256": "e6261e898b256ccafbe986a696125c53b3b2b2bbbf75c73653cd1ac7a09bdf70",
+      "chars": 1286,
+      "changed": "2026-11-13",
+      "vendors": [
+        "mm-wall"
+      ]
+    },
+    "https://make-money.gitbook.io/integration/overview/postbacks": {
+      "sha256": "cc8913891acf45c810266d93da6af356b381770f43c43d79c9e8db9d59fd8798",
+      "chars": 1259,
+      "changed": "2026-11-13",
+      "vendors": [
+        "mm-wall"
+      ]
+    },
+    "https://offery.io/docs/": {
+      "sha256": "c2e29df0ffd498bfb4d00ba5a47f63f6248f5de56f10b107fb85207db365168a",
+      "chars": 8030,
+      "changed": "2026-11-13",
+      "vendors": [
+        "offery"
+      ]
+    },
+    "https://pubscale.gitbook.io/offerwall-sdk/server-to-server-s2s-callback-configuration": {
+      "sha256": "a712072d1440b7912cf82330204337fab4498c687fa4dd130cc3b028cc7f4b43",
+      "chars": 5121,
+      "changed": "2026-11-13",
+      "vendors": [
+        "pubscale"
+      ]
+    },
+    "https://supply-docs.tapresearch.com/docs/3.x/basic-integration/sdk-integration/reward-reconciliation": {
+      "sha256": "e34e6eb868514bb8ff89063dbd6768e8b320af85007b86449a4ab34245b711df",
+      "chars": 899,
+      "changed": "2026-11-13",
+      "vendors": [
+        "tapresearch"
+      ]
+    },
+    "https://supply-docs.tapresearch.com/docs/3.x/hosted-link/handling-rewards": {
+      "sha256": "e04cc0a4cfe9ec8ad5a708897a0418e6d92e3c9a1724a7cb9f76ab88f99d2b46",
+      "chars": 10257,
+      "changed": "2026-11-13",
+      "vendors": [
+        "tapresearch"
+      ]
+    },
     "https://support.getcake.com/support/articles/5000546436-tokens-in-3rd-party-affiliate-pixels-cake-basic": {
       "sha256": "c33d02ebe5d7940bbaf94f5e3ab8929bbd3f3c7322157203602fa1297dbe90b4",
       "chars": 1625,
@@ -431,6 +655,86 @@
       "changed": "2026-11-13",
       "vendors": [
         "cake"
+      ]
+    },
+    "https://theoremreach.com/docs/offers_api": {
+      "sha256": "0f7dc63d4803c42264cf23798fa1d67412fe923ee553e21631586d3aa3ae2023",
+      "chars": 7725,
+      "changed": "2026-11-13",
+      "vendors": [
+        "theoremreach"
+      ]
+    },
+    "https://theoremreach.com/docs/offerwall": {
+      "sha256": "45581fbe4bf3f1e987bd308d5e1c9fe3448c310eeda3d427fc8607db6321355a",
+      "chars": 4340,
+      "changed": "2026-11-13",
+      "vendors": [
+        "theoremreach"
+      ]
+    },
+    "https://theoremreach.com/docs/routers": {
+      "sha256": "dea3c29f8b42d9e0bdc8470134424b7705812e34b6f9929f24b3bd151d904bba",
+      "chars": 6283,
+      "changed": "2026-11-13",
+      "vendors": [
+        "theoremreach"
+      ]
+    },
+    "https://theoremreach.com/docs/user_demographics": {
+      "sha256": "52e9e22b43088976c7cf6c2a1ffca073398592a1675be18f49d900403348edac",
+      "chars": 8644,
+      "changed": "2026-11-13",
+      "vendors": [
+        "theoremreach"
+      ]
+    },
+    "https://upwall.io/docs/postback": {
+      "sha256": "2b0207a52870255fc4b8ead1883aaca4720265bdecaa959397a63c4b4add17d0",
+      "chars": 2571,
+      "changed": "2026-11-13",
+      "vendors": [
+        "upwall"
+      ]
+    },
+    "https://wannads.com/documentation/postback/app": {
+      "sha256": "1f34e9c2a50fddcb42ea58e480a4b4945d31e02ef6cb773327fe770ccc19c818",
+      "chars": 4639,
+      "changed": "2026-11-13",
+      "vendors": [
+        "wannads"
+      ]
+    },
+    "https://www.cpalead.com/en/postback/documentation": {
+      "sha256": "2a28a3fbef25510e337a0b902bbb4f37892bcc708f7cfcd3406ed54409ddca55",
+      "chars": 25939,
+      "changed": "2026-11-13",
+      "vendors": [
+        "cpalead"
+      ]
+    },
+    "https://yoursurveys.readme.io/docs/faq-1": {
+      "sha256": "8efcd7d138c3d4f5177f32a7c786fba2307d6b9d03316ee0af91c69a615e27ab",
+      "chars": 2852,
+      "changed": "2026-11-13",
+      "vendors": [
+        "yoursurveys"
+      ]
+    },
+    "https://yoursurveys.readme.io/docs/update-panel-redirects": {
+      "sha256": "9c0ffc2cbe58f54cda782cef9c6dc2f652fd02f6aaece11e1dfca73c664653b2",
+      "chars": 3303,
+      "changed": "2026-11-13",
+      "vendors": [
+        "yoursurveys"
+      ]
+    },
+    "https://yoursurveys.readme.io/docs/yoursurveys-system-updates": {
+      "sha256": "83dd68ae1368ae8c4380932818dce3b2dd57c6b5718ecf192b3f2d7c678793b4",
+      "chars": 4895,
+      "changed": "2026-11-13",
+      "vendors": [
+        "yoursurveys"
       ]
     }
   }
