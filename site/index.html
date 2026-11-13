@@ -10,6 +10,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="style.css">
+<script type="module" src="ui.js"></script>
 <script type="module" src="app.js"></script>
 </head>
 <body>
@@ -30,15 +31,88 @@
       <svg class="orbit" viewBox="0 0 320 320" aria-hidden="true" focusable="false"><circle cx="160" cy="160" r="60" fill="none" stroke="currentColor" stroke-opacity="0.32" stroke-width="1.5"/><circle cx="160" cy="160" r="104" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="1.5"/><circle cx="160" cy="160" r="148" fill="none" stroke="currentColor" stroke-opacity="0.13" stroke-width="1.5"/><circle cx="248.2" cy="104.9" r="6" fill="currentColor"/><circle cx="27.0" cy="95.1" r="5" fill="currentColor"/><circle cx="121.4" cy="206.0" r="4" fill="currentColor"/><circle cx="224.9" cy="293.0" r="4" fill="currentColor"/><path fill="currentColor" fill-rule="evenodd" transform="translate(122.00 122.00) scale(0.1484)" d="M336.3 95.9C319.1 98.4,297.6 107.1,285 116.7C276.3 123.3,265.6 134.8,259.4 144C255.6 149.7,231 197.7,231 199.4C231 199.6,223.9 214,215.3 231.6C194.9 273.3,194.8 273.6,199.2 281.3C204.4 290.3,217 291.4,222.7 283.3C224.9 280.1,260.6 209.7,271.7 186.5C283.1 162.7,300.2 141.3,312.4 135.5C331 126.7,352.7 128.5,376.3 140.8C399.9 153.1,416.7 174.9,423.5 202C425.8 211.1,426.1 236,424.1 245.5C417.7 274.3,403.7 297.7,382.2 315.2C361.3 332.4,337.8 339.6,311.6 337C305.6 336.4,300.5 336.1,300.3 336.3C300 336.6,304 337.8,309.1 339.1L318.5 341.4 337 341.4C357.4 341.5,363.6 340.6,379.5 335.4C426.4 320.2,461.3 281.1,469.5 234.9C471.4 223.8,471.4 201.5,469.4 191C460.9 146.3,422.9 108.4,376 97.9C366.2 95.7,345.4 94.6,336.3 95.9M156 170.4C124.8 175,100.2 187.4,78.4 209.3C55.7 232.1,43.7 257.6,41 288.2C35.9 345.5,73.4 396.9,131.8 412.6C143.6 415.8,166.5 416.9,178.8 415C203.2 411.1,228.2 397.3,243.4 379.3C254.5 366.3,258.1 359.6,290.9 290.5C293 286.1,297.3 277.1,300.4 270.5C303.6 263.9,307.7 255.1,309.7 251C315.9 237.7,315.1 228.7,307.2 223.8C302.5 220.9,293.9 221.5,290.5 225C288 227.6,258.4 286.1,243.9 317.2C233.2 340.2,224.5 353.5,212.5 365.5C199.7 378.3,190.5 381.7,170.5 380.6C132.2 378.7,98.4 349.6,88.4 310C86.9 304.1,86.5 298.9,86.5 286.5L86.5 270.5 89.3 259.6C99.4 220.6,126.8 189.8,161.5 178.1C173.1 174.2,192.4 172.8,206.7 174.8C213.9 175.9,212 174.6,203.5 172.6C187 168.8,171.6 168.1,156 170.4"/></svg>
       <p class="eyebrow">Live demo, open source</p>
       <h1>Postback macros, side by side</h1>
-      <p id="lead">Macros, signature methods and reversal rules for tracking platforms and offerwall networks. Every fact links to the vendor page it comes from. Search the sheet or build an example postback URL.</p>
+      <p id="lead">Macros, signature methods and reversal rules for tracking platforms and offerwall networks. Every fact links to the vendor page it comes from. Compare them at a glance, search the sheet or build an example postback URL.</p>
       <ul class="stats" id="stats" aria-label="Dataset summary"></ul>
+      <div class="hero-actions">
+        <a class="btn" href="#use"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/></svg>Use it in your project</a>
+        <a class="btn" href="https://moonetix.com/academy/glossary/what-are-postback-macros?from=github-pages-affiliate-postback-macros"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6c-2-1.5-4.5-2-8-2v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2V4c-3.5 0-6 .5-8 2zM12 6v14"/></svg>Read the guide</a>
+      </div>
     </div>
   </section>
 
-  <section class="wrap" aria-labelledby="builder-h">
-    <div class="card">
+  <section class="wrap section first" aria-labelledby="uses-h">
+    <div class="sec-head">
+      <h2 id="uses-h">What it is for</h2>
+      <p class="lead">Three jobs it does for a rewards app, site, game or community that credits users from postbacks.</p>
+    </div>
+    <ul class="uses">
+      <li class="card use">
+        <h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Wire an offerwall postback</h3>
+        <p>Look up the macros a network sends, such as the user ID, reward and transaction ID, and build the postback URL to paste into its dashboard.</p>
+      </li>
+      <li class="card use">
+        <h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></span>Verify every reward</h3>
+        <p>See how each network signs its postbacks: the scheme, the signed input, the key and where the signature is sent, so only genuine requests credit a user.</p>
+      </li>
+      <li class="card use">
+        <h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9h11a5 5 0 0 1 0 10H8"/><path d="M8 5L4 9l4 4"/></svg></span>Handle reversals and retries</h3>
+        <p>Check how a reversal arrives and what your endpoint has to answer, so a chargeback takes a reward back once and a retry never credits it twice.</p>
+      </li>
+    </ul>
+  </section>
+
+  <div class="wrap" id="load-error-wrap" hidden>
+    <div class="notice bad" id="load-error" role="alert">
+      <svg class="ni" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.5"/></svg>
+      <div>
+        <strong>The data file did not load.</strong>
+        <span>Reload the page to try again. The same content is in the <a href="https://github.com/moonetix/affiliate-postback-macros#readme">README</a> and in <a href="https://github.com/moonetix/affiliate-postback-macros/blob/main/data/macros.json">data/macros.json</a> in the repo.</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="sheet">
+  <section class="wrap section" id="glance" aria-labelledby="glance-h">
+    <div class="sec-head">
+      <h2 id="glance-h">At a glance</h2>
+      <p class="lead">These tables are computed from <code>data/macros.json</code> when the page loads. Open a platform in the sheet below for every macro and its source.</p>
+    </div>
+    <div class="two">
+      <div class="stack">
+        <div class="card">
+          <h3 class="card-h"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l3 3M14 9l2 2"/></svg></span>How offerwall networks sign postbacks</h3>
+          <table class="glance" id="g-sign">
+            <thead><tr><th scope="col">Network</th><th scope="col">Signature</th><th scope="col">Reversals</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <p class="muted small" id="g-sign-sum"></p>
+        </div>
+        <div class="card">
+          <h3 class="card-h"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>How tracking platforms secure inbound postbacks</h3>
+          <table class="glance" id="g-track">
+            <thead><tr><th scope="col">Platform</th><th scope="col">Click ID parameter</th><th scope="col">Security</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <p class="muted small" id="g-track-sum"></p>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-h"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 20h18M7 20v-6M12 20V6M17 20v-9"/></svg></span>How many platforms document each field</h3>
+        <h4 id="g-ow-h">Offerwall networks</h4>
+        <ul class="cover" id="g-cover-ow" aria-labelledby="g-ow-h"></ul>
+        <h4 id="g-tp-h">Tracking platforms</h4>
+        <ul class="cover" id="g-cover-tp" aria-labelledby="g-tp-h"></ul>
+        <p class="muted small">n/d means not documented on the vendor pages the sheet cites. The feature may still exist.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="build" aria-labelledby="builder-h">
+    <div class="sec-head">
       <h2 id="builder-h">Postback URL builder</h2>
-      <p class="muted">Pick a platform. For an offerwall network you get the URL to paste into its dashboard, pointing at your server. For a tracking platform you get its inbound postback, filled with the macros of the platform that sends the conversion.</p>
+      <p class="lead">Pick a platform. For an offerwall network you get the URL to paste into its dashboard, pointing at your server. For a tracking platform you get its inbound postback, filled with the macros of the platform that sends the conversion.</p>
+    </div>
+    <div class="card">
       <form id="builder" class="builder">
         <div class="field">
           <label for="b-platform">Platform</label>
@@ -65,11 +139,9 @@
           <p id="b-fixed" class="muted small"></p>
         </fieldset>
         <div class="full">
-          <p class="out-label" id="b-url-label">Example postback URL</p>
-          <pre class="url" id="b-url" aria-labelledby="b-url-label" tabindex="0"></pre>
-          <div class="actions">
-            <button type="button" class="btn primary" id="b-copy">Copy URL</button>
-            <span id="b-status" class="muted" role="status"></span>
+          <div class="code out">
+            <div class="code-bar"><span id="b-url-label">Example postback URL</span><button type="button" class="copy main" data-copy="#b-url" aria-label="Copy the postback URL">Copy URL</button></div>
+            <pre class="url" id="b-url" aria-labelledby="b-url-label" tabindex="0"></pre>
           </div>
           <div id="b-notes" class="notes"></div>
         </div>
@@ -77,8 +149,11 @@
     </div>
   </section>
 
-  <section class="wrap section" aria-labelledby="browse-h">
-    <h2 id="browse-h">Browse the sheet</h2>
+  <section class="wrap section" id="browse" aria-labelledby="browse-h">
+    <div class="sec-head">
+      <h2 id="browse-h">Browse the sheet</h2>
+      <p class="lead">Every platform and network with its macros, signature, reversal and response rules. Each row links to the vendor page it comes from.</p>
+    </div>
     <form class="card filters" id="filters" role="search">
       <div class="field grow">
         <label for="q">Full-text search</label>
@@ -94,18 +169,67 @@
       </div>
     </form>
     <div class="bar">
-      <p id="count" class="muted" aria-live="polite"></p>
+      <p id="count" class="muted" aria-live="polite">Loading the sheet.</p>
       <div class="views">
         <button type="button" class="btn" id="expand">Expand all</button>
         <button type="button" class="btn" id="collapse">Collapse all</button>
       </div>
     </div>
+    <div class="notice" id="empty" hidden>
+      <svg class="ni" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+      <div>
+        <strong>No platform or network matches.</strong>
+        <span>Try a macro name such as clickid, or a word such as reversal.</span>
+      </div>
+      <button type="button" class="btn" id="reset">Clear the search</button>
+    </div>
     <div id="list" class="list"></div>
   </section>
+  </div>
 
-  <section class="wrap section" aria-labelledby="data-h">
-    <div class="card">
-      <h2 id="data-h">Use the data</h2>
+  <section class="wrap section" id="use" aria-labelledby="use-h">
+    <div class="sec-head">
+      <h2 id="use-h">Use it in your project</h2>
+      <p class="lead">Everything on this page is one JSON file with a schema. Read it with any language; nothing to install.</p>
+    </div>
+    <div class="card usage">
+      <div class="tabs" role="tablist" aria-label="Tool">
+        <button type="button" role="tab" id="tab-jq" aria-controls="panel-jq" aria-selected="true">curl and jq</button>
+        <button type="button" role="tab" id="tab-node" aria-controls="panel-node" aria-selected="false" tabindex="-1">Node.js</button>
+      </div>
+      <div class="tabpanel" role="tabpanel" id="panel-jq" aria-labelledby="tab-jq">
+        <div class="code">
+          <div class="code-bar"><span>Get the file</span><button type="button" class="copy" data-copy aria-label="Copy the curl command">Copy</button></div>
+          <pre tabindex="0"><code data-snippet="get">curl -sO https://raw.githubusercontent.com/moonetix/affiliate-postback-macros/main/data/macros.json</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-bar"><span>Signature scheme of every offerwall network</span><button type="button" class="copy" data-copy aria-label="Copy the jq example">Copy</button></div>
+          <pre tabindex="0"><code data-snippet="jq">jq -r '.offerwall_networks[] | [.name, (.signature.scheme // "none documented")] | @tsv' macros.json</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-bar"><span>Output</span></div>
+          <pre tabindex="0"><code data-snippet="jq-out" id="jq-out">Run the command to see one line per network.</code></pre>
+        </div>
+      </div>
+      <div class="tabpanel" role="tabpanel" id="panel-node" aria-labelledby="tab-node" hidden>
+        <div class="code">
+          <div class="code-bar"><span>Get the file</span><button type="button" class="copy" data-copy aria-label="Copy the curl command for Node.js">Copy</button></div>
+          <pre tabindex="0"><code data-snippet="node-get">curl -sO https://raw.githubusercontent.com/moonetix/affiliate-postback-macros/main/data/macros.json</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-bar"><span>payout.mjs: the payout macro in a tracker's outbound postback</span><button type="button" class="copy" data-copy aria-label="Copy the Node.js example">Copy</button></div>
+          <pre tabindex="0"><code data-snippet="node">import { readFileSync } from 'node:fs';
+
+const data = JSON.parse(readFileSync('macros.json', 'utf8'));
+const voluum = data.tracking_platforms.find((p) =&gt; p.id === 'voluum');
+const payout = voluum.macros.find((m) =&gt; m.direction === 'outbound' &amp;&amp; m.concept === 'amount');
+console.log(payout.macro, payout.source);</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-bar"><span>Output of node payout.mjs</span></div>
+          <pre tabindex="0"><code data-snippet="node-out" id="node-out">Run the script to see the macro and its source.</code></pre>
+        </div>
+      </div>
       <ul class="files">
         <li><a href="data/macros.json" download>macros.json</a> <span class="muted">Everything on this page: concepts, mapping, platforms and networks.</span></li>
         <li><a href="data/macros.schema.json" download>macros.schema.json</a> <span class="muted">JSON Schema the data is validated against on every build.</span></li>
@@ -113,7 +237,33 @@
       <p class="muted small" id="edition"></p>
     </div>
   </section>
+
+  <section class="wrap section" aria-labelledby="guide-h">
+    <div class="card guide">
+      <div class="guide-text">
+        <p class="kicker">Moonetix Academy</p>
+        <h2 id="guide-h">What Are Postback Macros? Placeholders and URL Parameters</h2>
+        <p>The guide to the basics: what a postback macro is, how placeholders such as <code>{user_id}</code> and <code>{status}</code> get filled in, status values and the hash check.</p>
+      </div>
+      <a class="btn" href="https://moonetix.com/academy/glossary/what-are-postback-macros?from=github-pages-affiliate-postback-macros"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6c-2-1.5-4.5-2-8-2v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2V4c-3.5 0-6 .5-8 2zM12 6v14"/></svg>Read the guide</a>
+    </div>
+  </section>
+
+  <section class="wrap section tight" aria-labelledby="about-h">
+    <div class="band">
+      <div class="band-text">
+        <h2 id="about-h">Made by Moonetix</h2>
+        <p>Moonetix is an affiliate network for publishers: you add its offerwall to an app, game, website, bot or community, and your users earn your own currency by completing offers available in their country.</p>
+      </div>
+      <div class="band-actions">
+        <a class="btn" href="https://github.com/moonetix/affiliate-postback-macros"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.9-.9z"/></svg>Star on GitHub</a>
+        <a class="btn primary" href="https://moonetix.com/register?from=github-pages-affiliate-postback-macros">Sign up free</a>
+      </div>
+    </div>
+  </section>
 </main>
+
+<p class="sr-only" id="copy-live" role="status" aria-live="polite"></p>
 
 <footer class="foot">
   <div class="wrap">

@@ -150,8 +150,17 @@ export function trackingParams(platform, sender = null) {
   return { base, kept, params, extra };
 }
 
-export function buildUrl(base, pairs) {
-  const query = pairs.map((p) => (p.value === '' ? p.name : `${p.name}=${p.value}`)).join('&');
-  if (!query) return base;
-  return `${base}${base.includes('?') ? '&' : '?'}${query}`;
+export function pickMacro(macros, concept, directions) {
+  for (const direction of directions || [undefined]) {
+    const hit = macros.find((m) => m.concept === concept && (direction === undefined || m.direction === direction));
+    if (hit) return hit;
+  }
+  return null;
+}
+
+export function coverage(rows, platforms) {
+  return rows.map((row) => {
+    const missing = platforms.filter((p) => !pickMacro(p.macros, row.concept, row.directions));
+    return { label: row.label, have: platforms.length - missing.length, total: platforms.length, missing: missing.map((p) => p.name) };
+  });
 }

@@ -1,5 +1,5 @@
 import {
-  DIRECTION_LABEL, monthLabel, hostOf, networkParams, trackingParams, buildUrl, senderMacro, firstMacro,
+  DIRECTION_LABEL, monthLabel, hostOf, networkParams, trackingParams, senderMacro, firstMacro, pickMacro, coverage,
 } from './builder.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -16,6 +16,11 @@ const el = (tag, attrs = {}, ...kids) => {
 };
 const src = (url, label = 'Source') => el('a', { href: url, class: 'src', text: label });
 const code = (text) => el('code', { text });
+const exampleBlock = (label, text, what) => el('div', { class: 'code example' },
+  el('div', { class: 'code-bar' },
+    el('span', { text: label }),
+    el('button', { type: 'button', class: 'copy', 'data-copy': true, 'aria-label': `Copy the ${what}`, text: 'Copy' })),
+  el('pre', { class: 'wrap', tabindex: '0' }, code(text)));
 
 let data;
 let concepts;
@@ -64,6 +69,58 @@ function renderStats() {
   $('#edition').textContent = `Edition ${monthLabel(data.edition)}. ${sources.size} distinct vendor pages are cited. A monthly workflow fetches each cited page and opens an issue when one changes.`;
 }
 
+function renderGlance() {
+  const networks = data.offerwall_networks;
+  const tbody = $('#g-sign tbody');
+  for (const n of networks) {
+    const s = n.signature;
+    tbody.append(el('tr', {},
+      el('th', { scope: 'row' }, el('a', { href: `#${n.id}`, text: n.name })),
+      el('td', {}, ...(s
+        ? [el('a', { href: s.source, text: s.scheme }), el('span', { class: 'muted small block', text: `Sent in: ${s.location}` })]
+        : [el('a', { href: n.source, text: 'None documented' })])),
+      el('td', {}, n.reversal ? el('a', { href: n.reversal.source, text: 'Documented' }) : el('span', { class: 'muted', text: 'n/d' })),
+    ));
+  }
+  const signed = networks.filter((n) => n.signature).length;
+  const reversed = networks.filter((n) => n.reversal).length;
+  $('#g-sign-sum').textContent = `${signed} of ${networks.length} networks document a signature or a shared secret, and ${reversed} of ${networks.length} document how a reversal arrives. Each link opens the vendor page.`;
+
+  const trackers = data.tracking_platforms;
+  for (const p of trackers) {
+    const click = pickMacro(p.macros, 'click_id', ['inbound']);
+    const security = p.security.flatMap((s, i) => [i ? ', ' : '', el('a', { href: s.source, text: s.mechanism })]);
+    $('#g-track tbody').append(el('tr', {},
+      el('th', { scope: 'row' }, el('a', { href: `#${p.id}`, text: p.name })),
+      el('td', {}, click ? el('a', { href: click.source }, code(click.macro)) : el('span', { class: 'muted', text: 'n/d' })),
+      el('td', {}, ...(security.length ? security : [el('span', { class: 'muted', text: 'n/d' })])),
+    ));
+  }
+  const allowlists = trackers.filter((p) => p.security.some((s) => /allowlist/i.test(s.mechanism))).length;
+  $('#g-track-sum').textContent = `${allowlists} of ${trackers.length} platforms document an IP allowlist for inbound postbacks. The parameter is the one that carries the platform's click ID back.`;
+
+  const groups = [
+    ['#g-cover-ow', data.mapping.offerwall, networks],
+    ['#g-cover-tp', data.mapping.tracking, trackers],
+  ];
+  for (const [sel, rows, platforms] of groups) {
+    for (const row of coverage(rows, platforms)) {
+      const fill = el('span');
+      fill.style.width = `${(row.have / row.total) * 100}%`;
+      $(sel).append(el('li', {},
+        el('span', { class: 'cover-label', text: row.label }),
+        el('span', { class: 'meter', 'aria-hidden': 'true' }, fill),
+        el('span', { class: 'cover-n', text: `${row.have} of ${row.total}` }),
+        row.missing.length ? el('span', { class: 'cover-miss muted small', text: `n/d: ${row.missing.join(', ')}` }) : '',
+      ));
+    }
+  }
+
+  $('#jq-out').textContent = networks.map((n) => `${n.name}\t${n.signature?.scheme ?? 'none documented'}`).join('\n');
+  const payout = data.tracking_platforms.find((p) => p.id === 'voluum')?.macros.find((m) => m.direction === 'outbound' && m.concept === 'amount');
+  if (payout) $('#node-out').textContent = `${payout.macro} ${payout.source}`;
+}
+
 function securitySummary(entry) {
   const x = entry.item;
   if (entry.type === 'network') return x.signature ? x.signature.scheme : 'No signature documented';
@@ -102,7 +159,7 @@ function renderNetwork(n, body) {
     el('a', { href: n.website, text: hostOf(n.website) }),
     ` · Method: ${n.method} · Sources checked ${monthLabel(n.checked)} · `,
     src(n.source, 'Postback docs')));
-  if (n.example) body.append(el('pre', { class: 'example', tabindex: '0', 'aria-label': `${n.name} example postback` }, n.example));
+  if (n.example) body.append(exampleBlock('Example postback', n.example, `${n.name} example postback`));
   body.append(el('h4', { text: 'Macros' }), macroTable(n, false));
   const dl = el('dl', { class: 'facts' });
   if (n.signature) {
@@ -129,7 +186,7 @@ function renderTracking(p, body) {
     ` · Sources checked ${monthLabel(p.checked)}`));
   body.append(
     el('h4', { text: `Inbound postback (${p.inbound.method})` }),
-    el('pre', { class: 'example', tabindex: '0', 'aria-label': `${p.name} inbound postback example` }, p.inbound.example),
+    exampleBlock('Example', p.inbound.example, `${p.name} inbound postback example`),
     el('p', {}, p.inbound.note, ' ', src(p.inbound.source)),
     el('h4', { text: 'Macros and parameters' }),
     macroTable(p, true),
@@ -190,9 +247,15 @@ function applyFilters() {
     if (q && visible) e.node.open = true;
   }
   const t = data.tracking_platforms.length + data.offerwall_networks.length;
-  $('#count').textContent = shown === 0
-    ? 'No platform or network matches. Try a macro name such as clickid, or a word such as reversal.'
-    : `Showing ${shown} of ${t}${q ? `, matching "${$('#q').value.trim()}"` : ''}`;
+  $('#count').textContent = `Showing ${shown} of ${t}${q ? `, matching "${$('#q').value.trim()}"` : ''}`;
+  $('#empty').hidden = shown > 0;
+}
+
+function resetFilters() {
+  $('#q').value = '';
+  $('#type').value = '';
+  applyFilters();
+  $('#q').focus();
 }
 
 function findEntry(id) {
@@ -349,23 +412,6 @@ function renderUrl() {
       p.value === '' ? '' : el('span', { class: 'u-val', text: p.value }),
     );
   });
-  builder.url = buildUrl(base, pairs);
-  $('#b-status').textContent = '';
-}
-
-async function copyUrl() {
-  const status = $('#b-status');
-  try {
-    await navigator.clipboard.writeText(builder.url);
-    status.textContent = 'Copied.';
-  } catch {
-    const range = document.createRange();
-    range.selectNodeContents($('#b-url'));
-    const sel = getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    status.textContent = document.execCommand('copy') ? 'Copied.' : 'Copy failed. The URL is selected, copy it manually.';
-  }
 }
 
 function openFromHash() {
@@ -383,6 +429,7 @@ async function init() {
   concepts = new Map(data.concepts.map((c) => [c.id, c]));
   entries = makeEntries();
   renderStats();
+  renderGlance();
   renderList();
   fillPlatformSelect();
   for (const form of document.querySelectorAll('form')) form.addEventListener('submit', (ev) => ev.preventDefault());
@@ -391,12 +438,12 @@ async function init() {
   $('#b-base').addEventListener('input', renderUrl);
   $('#b-params').addEventListener('input', renderUrl);
   $('#b-params').addEventListener('change', renderUrl);
-  $('#b-copy').addEventListener('click', copyUrl);
   $('#b-optional').addEventListener('change', () => {
     for (const tr of document.querySelectorAll('#b-params tr.opt')) tr.hidden = !$('#b-optional').checked;
   });
   $('#q').addEventListener('input', applyFilters);
   $('#type').addEventListener('input', applyFilters);
+  $('#reset').addEventListener('click', resetFilters);
   $('#expand').addEventListener('click', () => entries.forEach((e) => { if (!e.node.hidden) e.node.open = true; }));
   $('#collapse').addEventListener('click', () => entries.forEach((e) => { e.node.open = false; }));
   window.addEventListener('hashchange', openFromHash);
@@ -406,5 +453,6 @@ async function init() {
 }
 
 init().catch(() => {
-  $('#count').textContent = 'The data file could not be loaded. Download data/macros.json from the repository instead.';
+  $('#load-error-wrap').hidden = false;
+  $('#sheet').hidden = true;
 });
