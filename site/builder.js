@@ -164,3 +164,42 @@ export function coverage(rows, platforms) {
     return { label: row.label, have: platforms.length - missing.length, total: platforms.length, missing: missing.map((p) => p.name) };
   });
 }
+
+export function exampleUrl(network, endpoint) {
+  if (network.example) return splitExample(network.example);
+  const pairs = networkParams(network).params.filter((p) => p.on).map((p) => ({ name: p.name, value: p.value }));
+  return { base: endpoint, pairs };
+}
+
+export function schemeSamples(networks, limit = 3) {
+  const seen = new Set();
+  const out = [];
+  for (const n of networks) {
+    if (!n.signature || seen.has(n.signature.scheme)) continue;
+    seen.add(n.signature.scheme);
+    out.push(n);
+    if (out.length === limit) break;
+  }
+  return out;
+}
+
+export function sourcePages(data) {
+  const pages = new Set();
+  const walk = (node) => {
+    if (Array.isArray(node)) {
+      node.forEach(walk);
+    } else if (node && typeof node === 'object') {
+      for (const [key, value] of Object.entries(node)) {
+        if (key === 'source' && typeof value === 'string') pages.add(value.split('#')[0]);
+        else walk(value);
+      }
+    }
+  };
+  walk(data);
+  return pages;
+}
+
+export function shortList(names, limit = 4) {
+  if (names.length <= limit + 1) return names.join(', ');
+  return `${names.slice(0, limit).join(', ')} and ${names.length - limit} more`;
+}

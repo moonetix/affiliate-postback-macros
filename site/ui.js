@@ -25,13 +25,17 @@ async function toClipboard(text, node) {
 }
 
 function flash(button, ok) {
-  if (!button.dataset.label) button.dataset.label = button.textContent;
+  const label = button.querySelector('.copy-label') ?? button;
+  const use = button.querySelector('use');
+  if (!button.dataset.label) button.dataset.label = label.textContent;
   const what = (button.getAttribute('aria-label') || 'Copy the text').replace(/^Copy /, '');
-  button.textContent = ok ? 'Copied' : 'Press Ctrl+C';
+  label.textContent = ok ? 'Copied' : 'Press Ctrl+C';
+  if (use && ok) use.setAttribute('href', '#i-check');
   button.classList.toggle('done', ok);
   clearTimeout(timers.get(button));
   timers.set(button, setTimeout(() => {
-    button.textContent = button.dataset.label;
+    label.textContent = button.dataset.label;
+    if (use) use.setAttribute('href', '#i-copy');
     button.classList.remove('done');
   }, 2000));
   if (!live) return;
@@ -47,7 +51,7 @@ document.addEventListener('click', async (event) => {
   if (!button || button.disabled) return;
   const source = button.dataset.copy
     ? document.querySelector(button.dataset.copy)
-    : button.closest('.code')?.querySelector('code');
+    : button.closest('.codeblock')?.querySelector('code');
   if (!source) return;
   const text = source instanceof HTMLTextAreaElement || source instanceof HTMLInputElement ? source.value : source.textContent;
   flash(button, await toClipboard(text, source));

@@ -1,5 +1,6 @@
 import {
   DIRECTION_LABEL, monthLabel, hostOf, networkParams, trackingParams, senderMacro, firstMacro, pickMacro, coverage,
+  isPlaceholder, exampleUrl, schemeSamples, sourcePages, shortList,
 } from './builder.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -14,30 +15,43 @@ const el = (tag, attrs = {}, ...kids) => {
   for (const kid of kids) if (kid !== null && kid !== undefined && kid !== '') node.append(kid);
   return node;
 };
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const icon = (id, cls = 'ic') => {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', cls);
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  const use = document.createElementNS(SVG_NS, 'use');
+  use.setAttribute('href', `#${id}`);
+  svg.append(use);
+  return svg;
+};
 const src = (url, label = 'Source') => el('a', { href: url, class: 'src', text: label });
 const code = (text) => el('code', { text });
-const exampleBlock = (label, text, what) => el('div', { class: 'code example' },
-  el('div', { class: 'code-bar' },
-    el('span', { text: label }),
-    el('button', { type: 'button', class: 'copy', 'data-copy': true, 'aria-label': `Copy the ${what}`, text: 'Copy' })),
-  el('pre', { class: 'wrap', tabindex: '0' }, code(text)));
+const copyButton = (what) => el('button', { type: 'button', class: 'copy', 'data-copy': true, 'aria-label': `Copy the ${what}` },
+  icon('i-copy'), el('span', { class: 'copy-label', text: 'Copy' }));
+const exampleBlock = (label, text, what) => el('div', { class: 'codeblock example' },
+  el('div', { class: 'cb-bar' }, el('span', { text: label }), copyButton(what)),
+  el('pre', { class: 'soft', tabindex: '0' }, code(text)));
 
 let data;
 let concepts;
 let entries = [];
-const builder = { rows: [] };
+const groups = [];
+const builder = { rows: [], kept: [] };
 const DEFAULT_ENDPOINT = 'https://yoursite.com/postback';
+const TABLE_CAP = 8;
+const LIST_CAP = 8;
+const SLACK = 2;
+const AUTO_OPEN = 3;
+const TYPES = {
+  network: { one: 'offerwall network', many: 'offerwall networks', title: 'Offerwall networks', icon: 'i-grid' },
+  tracking: { one: 'tracking platform', many: 'tracking platforms', title: 'Tracking platforms', icon: 'i-route' },
+};
 
 const conceptLabel = (id) => concepts.get(id)?.label ?? id;
-
-function makeEntries() {
-  const tracking = data.tracking_platforms.map((p) => ({ type: 'tracking', item: p }));
-  const networks = data.offerwall_networks.map((n) => ({ type: 'network', item: n }));
-  for (const e of [...tracking, ...networks]) {
-    e.hay = searchText(e).toLowerCase();
-  }
-  return [...tracking, ...networks];
-}
+const kindLabel = (p) => (p.kind === 'tracker' ? 'Tracker' : 'Network platform');
+const countOf = (n, type) => `${n} ${n === 1 ? TYPES[type].one : TYPES[type].many}`;
 
 function collectStrings(value, out) {
   if (typeof value === 'string') out.push(value);
@@ -52,58 +66,141 @@ function searchText(entry) {
   if (entry.item.macros.some((m) => m.direction)) {
     for (const m of entry.item.macros) parts.push(DIRECTION_LABEL[m.direction]);
   }
-  parts.push(entry.type === 'tracking' ? 'tracking platform' : 'offerwall network');
+  parts.push(TYPES[entry.type].one);
   return parts.join('\n');
 }
 
+function makeEntries() {
+  const list = [
+    ...data.offerwall_networks.map((item) => ({ type: 'network', item })),
+    ...data.tracking_platforms.map((item) => ({ type: 'tracking', item })),
+  ];
+  for (const e of list) e.hay = searchText(e).toLowerCase();
+  return list;
+}
+
+function urlNodes(base, pairs) {
+  const out = [el('span', { class: 'u-base', text: base })];
+  pairs.forEach((p, i) => {
+    const sep = i === 0 && !base.includes('?') ? '?' : '&';
+    out.push(el('span', { class: 'u-pair' },
+      el('span', { class: 'u-name', text: p.value === '' ? `${sep}${p.name}` : `${sep}${p.name}=` }),
+      p.value === '' ? '' : el('span', { class: 'u-val', text: p.value })));
+  });
+  return out;
+}
+
 function renderStats() {
-  const latest = [...data.tracking_platforms, ...data.offerwall_networks].map((x) => x.checked).sort().at(-1);
-  const sources = new Set(collectStrings(data, []).filter((s) => s.startsWith('https://') && !s.includes(' ')));
+  const all = [...data.offerwall_networks, ...data.tracking_platforms];
+  const latest = all.map((x) => x.checked).sort().at(-1);
+  const pages = sourcePages(data).size;
   const items = [
-    `${data.tracking_platforms.length} tracking platforms`,
-    `${data.offerwall_networks.length} offerwall networks`,
-    `${data.concepts.length} concepts`,
+    countOf(data.offerwall_networks.length, 'network'),
+    countOf(data.tracking_platforms.length, 'tracking'),
     `Sources checked ${monthLabel(latest)}`,
   ];
-  for (const text of items) $('#stats').append(el('li', { class: 'chip', text }));
-  $('#edition').textContent = `Edition ${monthLabel(data.edition)}. ${sources.size} distinct vendor pages are cited. A monthly workflow fetches each cited page and opens an issue when one changes.`;
+  $('#stats').replaceChildren(...items.map((text) => el('li', { class: 'chip', text })));
+  $('#edition').textContent = `Edition ${monthLabel(data.edition)}. ${pages} distinct vendor pages are cited. A monthly workflow fetches each cited page and opens an issue when one changes.`;
+  $('#n-all').textContent = all.length;
+  $('#n-network').textContent = data.offerwall_networks.length;
+  $('#n-tracking').textContent = data.tracking_platforms.length;
+}
+
+function renderHero() {
+  const networks = data.offerwall_networks;
+  const main = networks.find((n) => n.id === 'moonetix') ?? networks[0];
+  const { base, pairs } = exampleUrl(main, DEFAULT_ENDPOINT);
+  const macros = pairs.filter((p) => isPlaceholder(p.value)).length;
+  const signed = networks.filter((n) => n.signature).length;
+  const box = $('#hero-preview');
+  box.replaceChildren(
+    el('p', { class: 'pv-kick' },
+      el('span', { text: `${main.name} postback` }),
+      el('span', { text: `${main.method}, ${macros} ${macros === 1 ? 'macro' : 'macros'}` })),
+    el('p', { class: 'url pv-url' }, ...urlNodes(base, pairs)),
+    el('p', { class: 'pv-kick' },
+      el('span', { text: 'How networks sign it' }),
+      el('span', { text: `${signed} of ${networks.length} document a scheme` })),
+  );
+  for (const n of schemeSamples(networks)) {
+    box.append(el('div', { class: 'pv-row' },
+      el('span', { class: 'pv-name', text: n.name }),
+      el('span', { class: 'badge scheme', text: n.signature.scheme }),
+      el('span', { class: 'pv-sub', text: `Sent in: ${n.signature.location}` })));
+  }
+}
+
+function capRows(tbody, button, noun) {
+  const rows = [...tbody.children];
+  if (rows.length <= TABLE_CAP + SLACK) return;
+  const set = (open) => {
+    rows.forEach((tr, i) => {
+      tr.hidden = !open && i >= TABLE_CAP;
+    });
+    button.setAttribute('aria-expanded', String(open));
+    button.textContent = open ? `Show the first ${TABLE_CAP}` : `Show all ${rows.length} ${noun}`;
+  };
+  button.hidden = false;
+  button.addEventListener('click', () => {
+    const open = button.getAttribute('aria-expanded') !== 'true';
+    set(open);
+    button.closest('.pair').classList.toggle('open', open);
+    if (!open) button.closest('.card').scrollIntoView({ block: 'nearest' });
+  });
+  set(false);
 }
 
 function renderGlance() {
   const networks = data.offerwall_networks;
-  const tbody = $('#g-sign tbody');
-  for (const n of networks) {
-    const s = n.signature;
-    tbody.append(el('tr', {},
-      el('th', { scope: 'row' }, el('a', { href: `#${n.id}`, text: n.name })),
-      el('td', {}, ...(s
-        ? [el('a', { href: s.source, text: s.scheme }), el('span', { class: 'muted small block', text: `Sent in: ${s.location}` })]
-        : [el('a', { href: n.source, text: 'None documented' })])),
-      el('td', {}, n.reversal ? el('a', { href: n.reversal.source, text: 'Documented' }) : el('span', { class: 'muted', text: 'n/d' })),
-    ));
-  }
+  const trackers = data.tracking_platforms;
   const signed = networks.filter((n) => n.signature).length;
   const reversed = networks.filter((n) => n.reversal).length;
-  $('#g-sign-sum').textContent = `${signed} of ${networks.length} networks document a signature or a shared secret, and ${reversed} of ${networks.length} document how a reversal arrives. Each link opens the vendor page.`;
+  const allowlists = trackers.filter((p) => p.security.some((s) => /allowlist/i.test(s.mechanism))).length;
 
-  const trackers = data.tracking_platforms;
+  const figs = [
+    [signed, networks.length, 'offerwall networks document a signature or shared secret'],
+    [reversed, networks.length, 'offerwall networks document how a reversal arrives'],
+    [allowlists, trackers.length, 'tracking platforms document an IP allowlist'],
+    [sourcePages(data).size, null, 'vendor pages cited, one source link per fact'],
+  ];
+  for (const [n, total, label] of figs) {
+    $('#g-figs').append(el('li', { class: 'card fig' },
+      el('p', { class: 'fig-n' }, el('strong', { text: n }), ' ', total === null ? '' : el('span', { text: `of ${total}` })),
+      el('p', { class: 'fig-l', text: label })));
+  }
+
+  const signBody = $('#g-sign tbody');
+  for (const n of networks) {
+    const s = n.signature;
+    signBody.append(el('tr', {},
+      el('th', { scope: 'row' }, el('a', { href: `#${n.id}`, text: n.name })),
+      el('td', {}, ...(s
+        ? [el('a', { href: s.source, text: s.scheme }), el('span', { class: 'sub', text: `Sent in: ${s.location}` })]
+        : [el('a', { href: n.source, text: 'None documented' })])),
+      el('td', {}, n.reversal
+        ? el('a', { href: n.reversal.source, class: 'badge t-good' }, icon('i-check', 'ic sm'), 'Documented')
+        : el('span', { class: 'badge t-none', text: 'Not documented' })),
+    ));
+  }
+  capRows(signBody, $('#g-sign-more'), TYPES.network.many);
+
+  const trackBody = $('#g-track tbody');
   for (const p of trackers) {
     const click = pickMacro(p.macros, 'click_id', ['inbound']);
     const security = p.security.flatMap((s, i) => [i ? ', ' : '', el('a', { href: s.source, text: s.mechanism })]);
-    $('#g-track tbody').append(el('tr', {},
-      el('th', { scope: 'row' }, el('a', { href: `#${p.id}`, text: p.name })),
-      el('td', {}, click ? el('a', { href: click.source }, code(click.macro)) : el('span', { class: 'muted', text: 'n/d' })),
-      el('td', {}, ...(security.length ? security : [el('span', { class: 'muted', text: 'n/d' })])),
+    trackBody.append(el('tr', {},
+      el('th', { scope: 'row' }, el('a', { href: `#${p.id}`, text: p.name }), el('span', { class: 'sub', text: kindLabel(p) })),
+      el('td', {}, click ? el('a', { href: click.source }, code(click.macro)) : el('span', { class: 'muted', text: 'Not documented' })),
+      el('td', {}, ...(security.length ? security : [el('span', { class: 'muted', text: 'Not documented' })])),
     ));
   }
-  const allowlists = trackers.filter((p) => p.security.some((s) => /allowlist/i.test(s.mechanism))).length;
-  $('#g-track-sum').textContent = `${allowlists} of ${trackers.length} platforms document an IP allowlist for inbound postbacks. The parameter is the one that carries the platform's click ID back.`;
+  capRows(trackBody, $('#g-track-more'), TYPES.tracking.many);
 
-  const groups = [
+  const sets = [
     ['#g-cover-ow', data.mapping.offerwall, networks],
     ['#g-cover-tp', data.mapping.tracking, trackers],
   ];
-  for (const [sel, rows, platforms] of groups) {
+  for (const [sel, rows, platforms] of sets) {
     for (const row of coverage(rows, platforms)) {
       const fill = el('span');
       fill.style.width = `${(row.have / row.total) * 100}%`;
@@ -111,13 +208,16 @@ function renderGlance() {
         el('span', { class: 'cover-label', text: row.label }),
         el('span', { class: 'meter', 'aria-hidden': 'true' }, fill),
         el('span', { class: 'cover-n', text: `${row.have} of ${row.total}` }),
-        row.missing.length ? el('span', { class: 'cover-miss muted small', text: `n/d: ${row.missing.join(', ')}` }) : '',
+        row.missing.length ? el('span', { class: 'cover-miss', title: row.missing.join(', '), text: `Not documented: ${shortList(row.missing, 3)}` }) : '',
       ));
     }
   }
 
-  $('#jq-out').textContent = networks.map((n) => `${n.name}\t${n.signature?.scheme ?? 'none documented'}`).join('\n');
-  const payout = data.tracking_platforms.find((p) => p.id === 'voluum')?.macros.find((m) => m.direction === 'outbound' && m.concept === 'amount');
+  const out = $('#jq-out');
+  out.textContent = networks.map((n) => `${n.name}\t${n.signature?.scheme ?? 'none documented'}`).join('\n');
+  out.parentNode.style.tabSize = String(Math.max(...networks.map((n) => n.name.length)) + 2);
+  $('#jq-out-label').textContent = `Output, ${networks.length} lines`;
+  const payout = trackers.find((p) => p.id === 'voluum')?.macros.find((m) => m.direction === 'outbound' && m.concept === 'amount');
   if (payout) $('#node-out').textContent = `${payout.macro} ${payout.source}`;
 }
 
@@ -131,6 +231,10 @@ function factRow(dl, term, content) {
   dl.append(el('dt', { text: term }), el('dd', {}, ...content));
 }
 
+function factTile(dl, term, content) {
+  dl.append(el('div', {}, el('dt', { text: term }), el('dd', {}, ...content)));
+}
+
 function fact(f, missing = 'Not documented on the linked pages.') {
   return f ? [f.detail, ' ', src(f.source)] : [el('span', { class: 'muted', text: missing })];
 }
@@ -140,18 +244,23 @@ function macroTable(item, withDirection) {
   if (withDirection) head.unshift('Where');
   const thead = el('thead', {}, el('tr', {}, ...head.map((h) => el('th', { scope: 'col', text: h }))));
   const tbody = el('tbody');
+  let previous;
   for (const m of item.macros) {
-    const tr = el('tr', { 'data-text': [m.macro, m.note ?? '', conceptLabel(m.concept)].join(' ').toLowerCase() });
-    if (withDirection) tr.append(el('td', { text: DIRECTION_LABEL[m.direction] }));
+    const tr = el('tr', {
+      class: withDirection && m.direction !== previous ? 'dir-start' : null,
+      'data-text': [m.macro, m.note ?? '', conceptLabel(m.concept)].join(' ').toLowerCase(),
+    });
+    previous = m.direction;
+    if (withDirection) tr.append(el('td', { class: 'c-where', text: DIRECTION_LABEL[m.direction] }));
     tr.append(
-      el('td', { text: conceptLabel(m.concept) }),
-      el('td', {}, code(m.macro)),
-      el('td', { text: m.note ?? '' }),
-      el('td', {}, src(m.source)),
+      el('td', { class: 'c-concept', text: conceptLabel(m.concept) }),
+      el('td', { class: 'c-macro' }, code(m.macro)),
+      el('td', { class: 'c-note', text: m.note ?? '' }),
+      el('td', { class: 'c-src' }, src(m.source)),
     );
     tbody.append(tr);
   }
-  return el('div', { class: 'scroll' }, el('table', { class: 'macros' }, thead, tbody));
+  return el('div', { class: 'table-wrap' }, el('table', { class: 'macros' }, thead, tbody));
 }
 
 function renderNetwork(n, body) {
@@ -161,7 +270,7 @@ function renderNetwork(n, body) {
     src(n.source, 'Postback docs')));
   if (n.example) body.append(exampleBlock('Example postback', n.example, `${n.name} example postback`));
   body.append(el('h4', { text: 'Macros' }), macroTable(n, false));
-  const dl = el('dl', { class: 'facts' });
+  const dl = el('dl', { class: 'kv' });
   if (n.signature) {
     const s = n.signature;
     factRow(dl, 'Signature', [el('strong', { text: s.scheme }), el('br'),
@@ -181,17 +290,17 @@ function renderNetwork(n, body) {
 
 function renderTracking(p, body) {
   body.append(el('p', { class: 'meta' },
-    `${p.kind === 'tracker' ? 'Tracker' : 'Network platform'} · `,
+    `${kindLabel(p)} · `,
     el('a', { href: p.website, text: hostOf(p.website) }),
     ` · Sources checked ${monthLabel(p.checked)}`));
   body.append(
     el('h4', { text: `Inbound postback (${p.inbound.method})` }),
     exampleBlock('Example', p.inbound.example, `${p.name} inbound postback example`),
-    el('p', {}, p.inbound.note, ' ', src(p.inbound.source)),
+    el('p', { class: 'after-code' }, p.inbound.note, ' ', src(p.inbound.source)),
     el('h4', { text: 'Macros and parameters' }),
     macroTable(p, true),
   );
-  const dl = el('dl', { class: 'facts' });
+  const dl = el('dl', { class: 'kv' });
   const sec = p.security.length
     ? [el('ul', { class: 'plain' }, ...p.security.map((s) => el('li', {}, el('strong', { text: `${s.mechanism}. ` }), s.detail, ' ', src(s.source))))]
     : [el('span', { class: 'muted', text: 'Not documented on the linked pages.' })];
@@ -206,22 +315,43 @@ function renderTracking(p, body) {
 
 function renderList() {
   const list = $('#list');
-  for (const e of entries) {
-    const x = e.item;
-    const details = el('details', { class: 'card entry', id: x.id });
-    const summary = el('summary', {},
-      el('span', { class: 'name', text: x.name }),
-      el('span', { class: `chip ${e.type}`, text: e.type === 'tracking' ? 'Tracking platform' : 'Offerwall network' }),
-      el('span', { class: 'sum muted', text: `${securitySummary(e)} · ${x.macros.length} macros` }),
-    );
-    const body = el('div', { class: 'body' });
-    if (e.type === 'network') renderNetwork(x, body);
-    else renderTracking(x, body);
-    body.append(el('p', { class: 'small' },
-      el('button', { type: 'button', class: 'btn small-btn', 'data-build': x.id, text: `Build a postback URL for ${x.name}` })));
-    details.append(summary, body);
-    e.node = details;
-    list.append(details);
+  for (const type of Object.keys(TYPES)) {
+    const members = entries.filter((e) => e.type === type);
+    const rows = el('div', { class: 'rows' });
+    for (const e of members) {
+      const x = e.item;
+      e.hits = el('span', { class: 'chip hits', hidden: true });
+      const summary = el('summary', {},
+        icon('i-chev', 'ic chev'),
+        el('span', { class: 'name', text: x.name }),
+        e.hits,
+        el('span', { class: 'sum muted', text: `${securitySummary(e)} · ${x.macros.length} macros` }),
+      );
+      const body = el('div', { class: 'body' });
+      if (type === 'network') renderNetwork(x, body);
+      else renderTracking(x, body);
+      body.append(el('p', { class: 'entry-cta' },
+        el('button', { type: 'button', class: 'btn sm', 'data-build': x.id, text: `Build a postback URL for ${x.name}` })));
+      e.rows = [...body.querySelectorAll('tr[data-text]')];
+      e.node = el('details', { class: 'entry', id: x.id }, summary, body);
+      rows.append(e.node);
+    }
+    const badge = el('span', { class: 'chip' });
+    const more = el('button', { type: 'button', class: 'more', 'aria-expanded': 'false', hidden: true });
+    const node = el('section', { class: 'card group', 'aria-labelledby': `grp-${type}` },
+      el('div', { class: 'card-head' },
+        el('span', { class: 'tile' }, icon(TYPES[type].icon)),
+        el('h3', { id: `grp-${type}`, text: TYPES[type].title }),
+        badge),
+      rows, more);
+    const group = { type, node, members, badge, more, expanded: false };
+    more.addEventListener('click', () => {
+      group.expanded = !group.expanded;
+      applyFilters();
+      if (!group.expanded) node.scrollIntoView({ block: 'nearest' });
+    });
+    groups.push(group);
+    list.append(node);
   }
   list.addEventListener('click', (ev) => {
     const btn = ev.target.closest('[data-build]');
@@ -233,29 +363,52 @@ function renderList() {
   });
 }
 
-function applyFilters() {
-  const q = $('#q').value.trim().toLowerCase();
-  const type = $('#type').value;
-  let shown = 0;
-  for (const e of entries) {
-    const visible = (!type || e.type === type) && (!q || e.hay.includes(q));
-    e.node.hidden = !visible;
-    for (const tr of e.node.querySelectorAll('tr[data-text]')) {
-      tr.classList.toggle('hit', Boolean(q) && tr.dataset.text.includes(q));
-    }
-    if (visible) shown++;
-    if (q && visible) e.node.open = true;
-  }
-  const t = data.tracking_platforms.length + data.offerwall_networks.length;
-  $('#count').textContent = `Showing ${shown} of ${t}${q ? `, matching "${$('#q').value.trim()}"` : ''}`;
-  $('#empty').hidden = shown > 0;
+function currentType() {
+  return document.querySelector('input[name=type]:checked')?.value ?? '';
 }
 
-function resetFilters() {
+function applyFilters() {
+  const raw = $('#q').value.trim();
+  const q = raw.toLowerCase();
+  const type = currentType();
+  const matched = [];
+  let pool = 0;
+  for (const g of groups) {
+    const inType = !type || g.type === type;
+    if (inType) pool += g.members.length;
+    const matches = g.members.filter((e) => inType && (!q || e.hay.includes(q)));
+    const capped = !q && !g.expanded && matches.length > LIST_CAP + SLACK;
+    for (const e of g.members) {
+      const at = matches.indexOf(e);
+      e.node.hidden = at < 0 || (capped && at >= LIST_CAP);
+      let hits = 0;
+      for (const tr of e.rows) {
+        const hit = Boolean(q) && tr.dataset.text.includes(q);
+        tr.classList.toggle('hit', hit);
+        if (hit) hits++;
+      }
+      e.hits.hidden = hits === 0;
+      e.hits.textContent = `${hits} ${hits === 1 ? 'row matches' : 'rows match'}`;
+    }
+    g.node.hidden = matches.length === 0;
+    g.badge.textContent = q ? `${matches.length} of ${g.members.length}` : String(g.members.length);
+    g.more.hidden = Boolean(q) || matches.length <= LIST_CAP + SLACK;
+    g.more.setAttribute('aria-expanded', String(g.expanded));
+    g.more.textContent = g.expanded ? `Show the first ${LIST_CAP}` : `Show all ${countOf(matches.length, g.type)}`;
+    matched.push(...matches);
+  }
+  if (q && matched.length <= AUTO_OPEN) {
+    for (const e of matched) e.node.open = true;
+  }
+  const what = type ? TYPES[type].many : 'platforms and networks';
+  $('#count').textContent = q ? `${matched.length} of ${pool} ${what} match "${raw}"` : `${pool} ${what}`;
+  $('#empty').hidden = matched.length > 0;
+}
+
+function clearFilters() {
   $('#q').value = '';
-  $('#type').value = '';
+  document.querySelector('input[name=type][value=""]').checked = true;
   applyFilters();
-  $('#q').focus();
 }
 
 function findEntry(id) {
@@ -264,11 +417,11 @@ function findEntry(id) {
 
 function fillPlatformSelect() {
   const sel = $('#b-platform');
-  const groups = [
-    ['Offerwall networks', data.offerwall_networks],
-    ['Tracking platforms (inbound postback)', data.tracking_platforms],
+  const sets = [
+    [`Offerwall networks (${data.offerwall_networks.length})`, data.offerwall_networks],
+    [`Tracking platforms, inbound postback (${data.tracking_platforms.length})`, data.tracking_platforms],
   ];
-  for (const [label, items] of groups) {
+  for (const [label, items] of sets) {
     const g = el('optgroup', { label });
     for (const x of items) g.append(el('option', { value: x.id, text: x.name }));
     sel.append(g);
@@ -332,18 +485,19 @@ function rebuildRows() {
     if (sender && rows.some((r) => r.missing)) notes.push([`${sender.name} has no documented outbound macro for the rows marked "no macro".`]);
     for (const n of notes) fixedNote.append(...n);
   }
+  fixedNote.hidden = !fixedNote.childNodes.length;
   builder.rows = rows;
   rows.forEach((r, i) => {
     const check = el('input', { type: 'checkbox', id: `b-on-${i}`, 'data-i': String(i), 'aria-label': `Include ${conceptLabel(r.concept)}` });
     check.checked = r.on;
     const name = el('input', { type: 'text', class: 'pname', value: r.name, 'data-i': String(i), 'aria-label': `Parameter name for ${conceptLabel(r.concept)}`, spellcheck: 'false', autocomplete: 'off' });
-    const valueCell = el('td', {}, code(r.value));
-    if (r.missing) valueCell.append(' ', el('span', { class: 'warn small', text: 'no macro' }));
+    const valueCell = el('td', {}, el('code', { class: 'u-val', text: r.value }));
+    if (r.missing) valueCell.append(' ', el('span', { class: 'badge t-warn', text: 'no macro' }));
     tbody.append(el('tr', { class: r.on ? null : 'opt', hidden: !r.on && !$('#b-optional').checked },
       el('td', {}, check),
       el('td', {}, name),
       valueCell,
-      el('td', {}, el('span', { text: conceptLabel(r.concept) }), r.note ? el('span', { class: 'muted small block', text: r.note }) : ''),
+      el('td', {}, el('span', { text: conceptLabel(r.concept) }), r.note ? el('span', { class: 'sub', text: r.note }) : ''),
       el('td', {}, src((r.from ?? r).source)),
     ));
   });
@@ -362,35 +516,33 @@ function senderClickText(sender) {
 }
 
 function renderNotes(e) {
-  const box = $('#b-notes');
-  box.textContent = '';
-  const dl = el('dl', { class: 'facts' });
+  const dl = el('dl', { class: 'tiles' });
   const x = e.item;
   if (e.type === 'network') {
     if (x.signature) {
-      factRow(dl, 'Verify', [`${x.signature.scheme.replace(/\.+$/, '')}. Signed input: ${x.signature.input.replace(/\.+$/, '')}. Key: ${x.signature.key.replace(/\.+$/, '')}. `, src(x.signature.source)]);
+      factTile(dl, 'Verify', [`${x.signature.scheme.replace(/\.+$/, '')}. Signed input: ${x.signature.input.replace(/\.+$/, '')}. Key: ${x.signature.key.replace(/\.+$/, '')}. `, src(x.signature.source)]);
     } else {
-      factRow(dl, 'Verify', [el('span', { class: 'muted', text: 'No signature documented. Restrict by source IP if the network publishes a list.' })]);
+      factTile(dl, 'Verify', [el('span', { class: 'muted', text: 'No signature documented. Restrict by source IP if the network publishes a list.' })]);
     }
-    factRow(dl, 'Reversals', fact(x.reversal));
-    factRow(dl, 'Answer with', fact(x.response));
+    factTile(dl, 'Reversals', fact(x.reversal));
+    factTile(dl, 'Answer with', fact(x.response));
   } else {
     const click = x.macros.find((m) => m.direction === 'click_url' && m.concept === 'click_id');
     const sender = data.tracking_platforms.find((p) => p.id === $('#b-sender').value);
     if (click) {
-      factRow(dl, 'Click ID', [`${x.name} adds its click ID to the offer URL with `, code(click.macro),
+      factTile(dl, 'Click ID', [`${x.name} adds its click ID to the offer URL with `, code(click.macro),
         ...senderClickText(sender), ' ', src(click.source)]);
     }
-    factRow(dl, 'Security', x.security.length
+    factTile(dl, 'Security', x.security.length
       ? [x.security.map((s) => s.mechanism).join(', '), '. ', src(x.security[0].source)]
       : [el('span', { class: 'muted', text: 'Not documented on the linked pages.' })]);
-    factRow(dl, 'Duplicates', fact(x.duplicates));
+    factTile(dl, 'Duplicates', fact(x.duplicates));
   }
-  box.append(dl);
+  $('#b-notes').replaceChildren(dl);
 }
 
 function currentPairs() {
-  const pairs = [...builder.kept.map((p) => ({ ...p, kept: true }))];
+  const pairs = [...builder.kept];
   const names = document.querySelectorAll('#b-params .pname');
   builder.rows.forEach((r, i) => {
     const on = $(`#b-on-${i}`)?.checked;
@@ -401,26 +553,24 @@ function currentPairs() {
 
 function renderUrl() {
   const base = $('#b-base').value.trim() || DEFAULT_ENDPOINT;
-  const pairs = currentPairs();
-  const out = $('#b-url');
-  out.textContent = '';
-  out.append(el('span', { class: 'u-base', text: base }));
-  pairs.forEach((p, i) => {
-    out.append(
-      el('span', { class: 'u-sep', text: i === 0 && !base.includes('?') ? '?' : '&' }),
-      el('span', { class: 'u-name', text: p.value === '' ? p.name : `${p.name}=` }),
-      p.value === '' ? '' : el('span', { class: 'u-val', text: p.value }),
-    );
-  });
+  $('#b-url').replaceChildren(...urlNodes(base, currentPairs()));
 }
 
 function openFromHash() {
-  const id = decodeURIComponent(location.hash.slice(1));
-  const e = id && findEntry(id);
-  if (e) {
-    e.node.open = true;
-    e.node.scrollIntoView({ block: 'start' });
+  let id = '';
+  try {
+    id = decodeURIComponent(location.hash.slice(1));
+  } catch {
+    return;
   }
+  const e = id && findEntry(id);
+  if (!e) return;
+  const group = groups.find((g) => g.type === e.type);
+  if (group.members.indexOf(e) >= LIST_CAP) group.expanded = true;
+  applyFilters();
+  if (e.node.hidden) clearFilters();
+  e.node.open = true;
+  e.node.scrollIntoView({ block: 'start' });
 }
 
 async function init() {
@@ -429,6 +579,7 @@ async function init() {
   concepts = new Map(data.concepts.map((c) => [c.id, c]));
   entries = makeEntries();
   renderStats();
+  renderHero();
   renderGlance();
   renderList();
   fillPlatformSelect();
@@ -442,10 +593,17 @@ async function init() {
     for (const tr of document.querySelectorAll('#b-params tr.opt')) tr.hidden = !$('#b-optional').checked;
   });
   $('#q').addEventListener('input', applyFilters);
-  $('#type').addEventListener('input', applyFilters);
-  $('#reset').addEventListener('click', resetFilters);
-  $('#expand').addEventListener('click', () => entries.forEach((e) => { if (!e.node.hidden) e.node.open = true; }));
-  $('#collapse').addEventListener('click', () => entries.forEach((e) => { e.node.open = false; }));
+  $('#type').addEventListener('change', applyFilters);
+  $('#reset').addEventListener('click', () => {
+    clearFilters();
+    $('#q').focus();
+  });
+  $('#expand').addEventListener('click', () => entries.forEach((e) => {
+    if (!e.node.hidden) e.node.open = true;
+  }));
+  $('#collapse').addEventListener('click', () => entries.forEach((e) => {
+    e.node.open = false;
+  }));
   window.addEventListener('hashchange', openFromHash);
   onPlatform();
   applyFilters();
@@ -453,6 +611,8 @@ async function init() {
 }
 
 init().catch(() => {
-  $('#load-error-wrap').hidden = false;
+  $('#load-error').hidden = false;
   $('#sheet').hidden = true;
+  $('#stats').replaceChildren(el('li', { class: 'chip', text: 'Could not load the data' }));
+  $('#hero-preview').replaceChildren(el('p', { class: 'muted', text: 'The data file did not load.' }));
 });
